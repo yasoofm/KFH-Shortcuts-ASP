@@ -1,0 +1,6 @@
+@BackKFHShortcuts_HostAddress = http://localhost:5114
+
+GET {{BackKFHShortcuts_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
