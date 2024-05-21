@@ -1,4 +1,8 @@
 
+using BackKFHShortcuts.Models;
+using BackKFHShortcuts.Models.Authentication;
+using Microsoft.EntityFrameworkCore;
+
 namespace BackKFHShortcuts
 {
     public class Program
@@ -13,6 +17,14 @@ namespace BackKFHShortcuts
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<ShortcutsContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.LogTo(Console.WriteLine, LogLevel.Information);
+            });
+
+            builder.Services.AddScoped<TokenService>();
 
             var app = builder.Build();
 
