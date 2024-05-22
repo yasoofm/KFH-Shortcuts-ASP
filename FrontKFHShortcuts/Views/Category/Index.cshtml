@@ -1,0 +1,69 @@
+﻿@model IEnumerable<FrontKFHShortcuts.Models.Catalog.CategoryResponse>
+
+@{
+    ViewBag.Title = "Category List";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center">Category List</h2>
+            <p class="text-center">Use category list to describe your overall core business from the provided list.<br>Click the name of the category where you want to add a list item.</p>
+            <a href="@Url.Action("Create", "Category")" class="btn btn-primary mb-3">+ Add Category</a>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" />
+                        </th>
+                        <th>
+                            Category
+                        </th>
+                        <th>
+                            Id
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Edit", "Category", new { id = item.Id })" class="btn btn-success">✎</a>
+                                <a href="@Url.Action("Delete", "Category", new { id = item.Id })" class="btn btn-danger">✖</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+</style>
+
