@@ -22,8 +22,8 @@ namespace FrontKFHShortcuts.Controllers
 
         private static List<ProductResponse> products = new List<ProductResponse>
         {
-            new ProductResponse { Id = 1, Name = "Organic Cream", Image = "path/to/image1.jpg", Shariah = "Compliant", TargetAudience = "Adults", Description = "Organic cream for beauty", CategoryName = "Beauty" },
-            new ProductResponse { Id = 2, Name = "Rain Umbrella", Image = "path/to/image2.jpg", Shariah = "Non-compliant", TargetAudience = "All", Description = "Umbrella for rainy days", CategoryName = "Grocery" },
+            new ProductResponse { Id = 1, Name = "Organic Cream", Image = "path/to/image1.jpg", Shariah = "Compliant", TargetAudience = "Adults", Description = "Organic cream for beauty", CategoryName = "Beauty" , AwardedPoints=100},
+            new ProductResponse { Id = 2, Name = "Rain Umbrella", Image = "path/to/image2.jpg", Shariah = "Non-compliant", TargetAudience = "All", Description = "Umbrella for rainy days", CategoryName = "Grocery", AwardedPoints=50},
             // Add more products as needed
         };
 
@@ -51,11 +51,12 @@ namespace FrontKFHShortcuts.Controllers
                 {
                     Id = products.Count + 1,
                     Name = request.Name,
-                    Image = request.Image ?? "default/path/to/image.jpg",
+                    Image = request.Image,
                     Shariah = request.Shariah ?? "Unknown",
                     TargetAudience = request.TargetAudience ?? "Unknown",
                     Description = request.Description ?? "No description",
-                    CategoryName = request.CategoryName
+                    CategoryName = request.CategoryName,
+                    AwardedPoints = request.AwardedPoints
                 };
 
                 products.Add(newProduct);
@@ -81,7 +82,8 @@ namespace FrontKFHShortcuts.Controllers
                 Shariah = product.Shariah,
                 TargetAudience = product.TargetAudience,
                 Description = product.Description,
-                CategoryName = product.CategoryName
+                CategoryName = product.CategoryName,
+                AwardedPoints = product.AwardedPoints
             };
 
             ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
@@ -103,6 +105,7 @@ namespace FrontKFHShortcuts.Controllers
                     existingProduct.TargetAudience = request.TargetAudience;
                     existingProduct.Description = request.Description;
                     existingProduct.CategoryName = request.CategoryName;
+                    existingProduct.AwardedPoints = request.AwardedPoints;
                 }
                 return RedirectToAction("Index");
             }
@@ -149,7 +152,8 @@ namespace FrontKFHShortcuts.Controllers
                 Shariah = product.Shariah,
                 TargetAudience = product.TargetAudience,
                 Description = product.Description,
-                CategoryName = product.CategoryName
+                CategoryName = product.CategoryName,
+                AwardedPoints =product.AwardedPoints
             };
 
             ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
@@ -171,11 +175,24 @@ namespace FrontKFHShortcuts.Controllers
                     existingProduct.TargetAudience = request.TargetAudience;
                     existingProduct.Description = request.Description;
                     existingProduct.CategoryName = request.CategoryName;
+                    existingProduct.AwardedPoints = request.AwardedPoints;
                 }
                 return RedirectToAction("Index");
             }
             ViewBag.Categories = new SelectList(categories, "Name", "Name", request.CategoryName);
             return View(request);
+        }
+
+
+        public ActionResult Details(int id)
+        {
+
+            var product = products.Find(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+                return View(product);
         }
     }
 }
