@@ -9,5 +9,6 @@
         public string ClientName { get; set; }
         public int ProductId { get; set; }
         public string ProductTitle { get; set; }
+        public int NumberOfPoints { get; set; }
     }
 }

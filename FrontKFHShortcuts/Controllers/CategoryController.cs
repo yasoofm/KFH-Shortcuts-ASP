@@ -79,28 +79,28 @@ namespace FrontKFHShortcuts.Controllers
                 }
             }
 
-            // GET: Category/Delete/5
-            public IActionResult Delete(int id)
+        // GET: Category/Delete/5
+        public ActionResult Delete(int id)
+        {
+            var category = categories.FirstOrDefault(c => c.Id == id);
+            return View(category);
+        }
+
+        // POST: Category/Delete/5
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            try
             {
                 var category = categories.FirstOrDefault(c => c.Id == id);
-                return View(category);
+                categories.Remove(category);
+                return RedirectToAction("Index");
             }
-
-            // POST: Category/Delete/5
-            [HttpPost]
-            public IActionResult Delete(int id, FormCollection collection)
+            catch
             {
-                try
-                {
-                    var category = categories.FirstOrDefault(c => c.Id == id);
-                    categories.Remove(category);
-                    return RedirectToAction("Index");
-                }
-                catch
-                {
-                    return View();
-                }
+                return View();
             }
         }
     }
+}
 
