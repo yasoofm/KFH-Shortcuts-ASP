@@ -25,7 +25,7 @@ namespace BackKFHShortcuts.Controllers
         {
             using(var context = _context)
             {
-                return Ok(await context.Categories.Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name }).ToListAsync());
+                return Ok(await context.Categories.Where(x => x.IsDeleted == false).Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name }).ToListAsync());
             }
         }
 
@@ -37,7 +37,7 @@ namespace BackKFHShortcuts.Controllers
             {
                 return Ok(await context.Products
                     .Include(x => x.Category)
-                    .Where(x => x.Category.Name == category)
+                    .Where(x => x.Category.Name == category && x.IsDeleted == false)
                     .Select(x => new GetProductResponse
                     {
                         Id = x.Id,
@@ -50,8 +50,5 @@ namespace BackKFHShortcuts.Controllers
                     }).ToListAsync());
             }
         }
-
-        
-
     }
 }

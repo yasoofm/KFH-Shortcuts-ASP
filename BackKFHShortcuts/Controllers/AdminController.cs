@@ -23,18 +23,18 @@ namespace BackKFHShortcuts.Controllers
             _context = context;
         }
 
-        // GET: /Admin/GetCategory
+        // GET: Admin/GetCategory
         [ProducesResponseType(typeof(Category), 200)]
         [HttpGet("GetCategory")]
         public async Task<ActionResult<IEnumerable<GetCategoryResponse>>> getCategories()
         {
             using (var context = _context)
             {
-                return Ok(await context.Categories.Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name}).ToListAsync());
+                return Ok(await context.Categories.Where(x => x.IsDeleted == false).Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name}).ToListAsync());
             }   
         }
 
-        // GET: /Admin/GetProduct?category=...
+        // GET: Admin/GetProduct?category=...
         [ProducesResponseType(typeof(Product), 200)]
         [HttpGet("GetProduct")]
         public async Task<ActionResult<IEnumerable<Product>>> getProducts(string category)
@@ -43,7 +43,7 @@ namespace BackKFHShortcuts.Controllers
             {
                 return Ok(await context.Products
                     .Include(x => x.Category)
-                    .Where(x => x.Category.Name == category)
+                    .Where(x => x.Category.Name == category && x.IsDeleted == false)
                     .Select(x => new GetProductResponse
                 {
                         Id = x.Id,
@@ -57,28 +57,28 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
-        // POST: /Admin/AddCategory
+        // POST: Admin/AddCategory
         [HttpPost("AddCategory")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> AddCategory(AddCategoryRequest request)
         {
             using(var context = _context)
             {
                 await context.Categories.AddAsync(new Category { Name = request.Name, });
-                context.SaveChanges();
-                return Ok();
+                await context.SaveChangesAsync();
+                return Created();
             }
         }
 
-        // POST: /Admin/AddProduct
+        // POST: Admin/AddProduct
         [HttpPost("AddProduct")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> AddProduct(AddProductRequest request)
         {
             using (var context = _context)
             {
-                var category = await context.Categories.Where(x => x.Name == request.CategoryName).SingleOrDefaultAsync();
+                var category = await context.Categories.Where(x => x.Name == request.CategoryName && x.IsDeleted == false).SingleOrDefaultAsync();
                 if(category == null) 
                 {
                     return NotFound();
@@ -91,7 +91,97 @@ namespace BackKFHShortcuts.Controllers
                     Image = request.Image, Sharia = request.Shariah,
                     TargetAudience = request.TargetAudience 
                 });
-                context.SaveChanges();
+                await context.SaveChangesAsync();
+                return Created();
+            }
+        }
+
+        // DELETE: Admin/RemoveCategory?Id=...
+        [HttpDelete("RemoveCategory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> RemoveCategory(int Id)
+        {
+            using( var context = _context)
+            {
+                var category = await context.Categories.FindAsync(Id);
+                if(category == null)
+                {
+                    return NotFound();
+                }
+                category.IsDeleted = true;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        // DELETE: Admin/RemoveCategory?Id=...
+        [HttpDelete("RemoveProduct")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> RemoveProduct(int Id)
+        {
+            using (var context = _context)
+            {
+                var product = await context.Products.FindAsync(Id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                product.IsDeleted = true;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [HttpPatch("EditProduct")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> EditProduct(int Id, AddProductRequest request)
+        {
+            using(var context = _context)
+            {
+                var product = await context.Products.FindAsync(Id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                if(request.Name != null)
+                {
+                    product.Name = request.Name;
+                }
+                if (request.Description != null)
+                {
+                    product.Description = request.Description;
+                }
+                if(request.AwardedPoints != null)
+                {
+                    product.AwardedPoints = request.AwardedPoints;
+                }
+                if(request.TargetAudience != null)
+                {
+                    product.TargetAudience = request.TargetAudience;
+                }
+                if(request.Image != null)
+                {
+                    product.Image = request.Image;
+                }
+                if(request.Shariah != null)
+                {
+                    product.Sharia = request.Shariah;
+                }
+                if(request.CategoryName != null)
+                {
+                    var newCategory = await context.Categories.Where(x => x.Name == request.CategoryName).FirstOrDefaultAsync();
+                    if (newCategory != null)
+                    {
+                        return NotFound();
+                    }
+                    product.Category = newCategory;
+                }
+
+                await context.SaveChangesAsync();
                 return Ok();
             }
         }
@@ -106,7 +196,6 @@ namespace BackKFHShortcuts.Controllers
             {
                 return NotFound();
             }
-
             return category;
         }
 
