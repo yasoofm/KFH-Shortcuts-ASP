@@ -6,25 +6,37 @@
 }
 
 @model FrontKFHShortcuts.Models.LogIn.LogInRequest
-
-<h2>Login</h2>
-
-<form asp-action="Login" method="post">
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" type="password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+    ViewBag.Title = "Login";
 }
+
+<div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div class="card" style="width: 20rem; padding: 2rem;">
+        <h2 class="text-center">Sign In</h2>
+        <form asp-action="Login" method="post">
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input type="email" class="form-control" id="Email" name="Email" required />
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input type="password" class="form-control" id="Password" name="Password" required />
+            </div>
+            <div><button type="submit" class="btn btn-primary btn-block">Sign In</button></div>
+            <div class="text-center mt-2">
+                <a href="#">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
