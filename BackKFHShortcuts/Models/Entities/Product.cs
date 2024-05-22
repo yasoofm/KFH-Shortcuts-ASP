@@ -9,6 +9,7 @@
         public string Sharia {  get; set; }
         public string Image {  get; set; }
         public string TargetAudience { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public Category Category { get; set; }
         public List<ProductRequest> ProductRequests { get; set; }
     }
