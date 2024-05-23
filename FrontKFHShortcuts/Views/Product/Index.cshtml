@@ -34,7 +34,7 @@
                 <td>@item.AwardedPoints</td>
                 <td>
                     @Html.ActionLink("Edit", "EditProduct", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    @Html.ActionLink("Delete", "DeleteConfirmed", new { id = item.Id })
                 </td>
             </tr>
         }

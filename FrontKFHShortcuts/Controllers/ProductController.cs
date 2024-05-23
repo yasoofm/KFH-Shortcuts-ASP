@@ -124,8 +124,7 @@ namespace FrontKFHShortcuts.Controllers
             return View(product);
         }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
+      
         public ActionResult DeleteConfirmed(int id)
         {
             var product = products.Find(p => p.Id == id);

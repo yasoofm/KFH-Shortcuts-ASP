@@ -1,0 +1,38 @@
+﻿@model IEnumerable<FrontKFHShortcuts.Models.Reward.RewardResponse>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Reward Requests List</h2>
+            <a href="@Url.Action("Create", "Reward")" class="btn btn-primary">Add Reward</a>
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Required Points</th>
+                        <th>Usage</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reward in Model)
+                    {
+                        <tr>
+                            <td>@reward.Id</td>
+                            <td>@Html.ActionLink(reward.Title, "Details", new { id = reward.Id })</td>
+                            <td>@reward.RequieredPoints</td>
+                            <td>@reward.Usage</td>
+                            <td>@reward.DueDate.ToString("MM/dd/yyyy")</td>
+                            <td>
+                                <button onclick="location.href='@Url.Action("EditReward", "Reward", new { id = reward.Id })'" class="btn btn-sm btn-warning">Edit</button>
+                                <button onclick="location.href='@Url.Action("DeleteReward", "Reward", new { id = reward.Id })'" class="btn btn-sm btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
