@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using YourNamespace.Controllers;
+using FrontKFHShortcuts.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using FrontKFHShortcuts.Models.Reward;
 using System.Reflection.Metadata.Ecma335;
 
-namespace YourNamespace.Controllers
+namespace FrontKFHShortcuts.Controllers
 {
     public class RewardController : Controller
     {

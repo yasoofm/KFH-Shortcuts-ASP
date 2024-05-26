@@ -5,7 +5,7 @@ namespace FrontKFHShortcuts.Controllers
 {
         public class CategoryController : Controller
         {
-            private static List<CategoryResponse> categories = new List<CategoryResponse>
+            public static List<CategoryResponse> categories = new List<CategoryResponse>
         {
             new CategoryResponse { Id = 1, Name = "Organic Crown" },
             new CategoryResponse { Id = 2, Name = "Rain Umbrella" },

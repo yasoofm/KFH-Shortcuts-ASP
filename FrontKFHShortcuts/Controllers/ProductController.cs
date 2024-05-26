@@ -9,35 +9,25 @@ namespace FrontKFHShortcuts.Controllers
 {
     public class ProductController : Controller
     {
-        private static List<CategoryResponse> categories = new List<CategoryResponse>
+        
+       private static List<ProductResponse> products = new List<ProductResponse>
         {
-            new CategoryResponse { Id = 1, Name = "Beauty" },
-            new CategoryResponse { Id = 2, Name = "Grocery" },
-            new CategoryResponse { Id = 3, Name = "Food" },
-            new CategoryResponse { Id = 4, Name = "Furniture" },
-            new CategoryResponse { Id = 5, Name = "Shoes" },
-            new CategoryResponse { Id = 6, Name = "Frames" },
-            new CategoryResponse { Id = 7, Name = "Jewellery" }
-        };
-
-        private static List<ProductResponse> products = new List<ProductResponse>
-        {
-            new ProductResponse { Id = 1, Name = "Organic Cream", Image = "path/to/image1.jpg", Shariah = "Compliant", TargetAudience = "Adults", Description = "Organic cream for beauty", CategoryName = "Beauty" , AwardedPoints=100},
-            new ProductResponse { Id = 2, Name = "Rain Umbrella", Image = "path/to/image2.jpg", Shariah = "Non-compliant", TargetAudience = "All", Description = "Umbrella for rainy days", CategoryName = "Grocery", AwardedPoints=50},
+            new ProductResponse { Id = 1, Name = "Organic Cream", Image = "path/to/image1.jpg", Shariah = "Compliant", TargetAudience = "Adults", Description = "Organic cream for beauty", CategoryName ="deandkas" , AwardedPoints=100},
+            new ProductResponse { Id = 2, Name = "Rain Umbrella", Image = "path/to/image2.jpg", Shariah = "Non-compliant", TargetAudience = "All", Description = "Umbrella for rainy days", CategoryName = "CategoryController.categories", AwardedPoints=50},
             // Add more products as needed
         };
 
         // GET: Products
         public ActionResult Index()
         {
-           ViewBag.Categories = categories;
+           ViewBag.Categories = CategoryController.categories;
             return View(products);
         }
 
         // GET: Products/Create
         public ActionResult Create()
         {
-            ViewBag.Categories = new SelectList(categories, "Name", "Name");
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name");
             return View();
         }
 
@@ -62,7 +52,7 @@ namespace FrontKFHShortcuts.Controllers
                 products.Add(newProduct);
                 return RedirectToAction("Index");
             }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name");
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name");
             return View(request);
         }
 
@@ -86,7 +76,7 @@ namespace FrontKFHShortcuts.Controllers
                 AwardedPoints = product.AwardedPoints
             };
 
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name", product.CategoryName);
             return View(request);
         }
 
@@ -109,7 +99,7 @@ namespace FrontKFHShortcuts.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", request.CategoryName);
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name", request.CategoryName);
             return View(request);
         }
 
@@ -155,7 +145,7 @@ namespace FrontKFHShortcuts.Controllers
                 AwardedPoints =product.AwardedPoints
             };
 
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name", product.CategoryName);
             return View(request);
         }
 
@@ -178,7 +168,7 @@ namespace FrontKFHShortcuts.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", request.CategoryName);
+            ViewBag.Categories = new SelectList(CategoryController.categories, "Name", "Name", request.CategoryName);
             return View(request);
         }
 
