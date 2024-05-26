@@ -1,57 +1,28 @@
 ﻿@model IEnumerable<FrontKFHShortcuts.Models.Request.RequestResponse>
 
-@{
-    ViewBag.Title = "Reward Requests List";
-}
-
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center">Reward Requests List</h2>
-            <p class="text-center">Use requests list to describe your overall applied requests from the provided list.<br>Click the ID of the request where you want to apply.</p>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Employee Id</th>
-                        <th>Employee Name</th>
-                        <th>Client Name</th>
-                        <th>Client Number</th>
-                        <th>Product Id</th>
-                        <th>Product Title</th>
-                        <th>Number Of Points</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.EmployeeId</td>
-                            <td>@item.EmployeeName</td>
-                            <td>@item.ClientName</td>
-                            <td>@item.ClientNumber</td>
-                            <td>@item.ProductId</td>
-                            <td>@item.ProductTitle</td>
-                            <td>@item.NumberOfPoints</td>
-                            <td>
-                                <a href="@Url.Action("Edit", "Request", new { id = item.Id })" class="btn btn-success">✎</a>
-                                <a href="@Url.Action("Delete", "Request", new { id = item.Id })" class="btn btn-danger">✖</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <a href="@Url.Action("Create", "Request")" class="btn btn-primary mb-3">+ Add Request</a>
-        </div>
-    </div>
-</div>
-
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-
-    .table {
-        box-shadow:
+<h2>Requests</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Employee Name</th>
+            <th>Client Name</th>
+            <th>Product Title</th>
+            <th>Number Of Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.Id</td>
+                <td>@request.EmployeeName</td>
+                <td>@request.ClientName</td>
+                <td>@request.ProductTitle</td>
+                <td>@request.NumberOfPoints</td>
+                <td>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
