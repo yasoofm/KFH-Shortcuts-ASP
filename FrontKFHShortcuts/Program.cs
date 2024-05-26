@@ -1,3 +1,5 @@
+using FrontKFHShortcuts.Models;
+
 namespace FrontKFHShortcuts
 {
     public class Program
@@ -9,9 +11,16 @@ namespace FrontKFHShortcuts
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSession();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             builder.Services.AddHttpClient();
+
+            builder.Services.AddScoped<GlobalAppState>(_=> new GlobalAppState());
 
             var app = builder.Build();
 

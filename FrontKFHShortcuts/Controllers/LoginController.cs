@@ -5,18 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using FrontKFHShortcuts.Models.LogIn;
+using Microsoft.AspNetCore.Http;
+using FrontKFHShortcuts.Models;
 
 namespace FrontKFHShortcuts.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly GlobalAppState MyState;
 
-        public LoginController(HttpClient httpClient, IConfiguration configuration)
+        public LoginController(HttpClient httpClient, IConfiguration configuration, GlobalAppState state)
         {
-            _httpClient = httpClient;
             _configuration = configuration;
+            MyState = state;
         }
 
         public IActionResult Index()
@@ -29,27 +31,18 @@ namespace FrontKFHShortcuts.Controllers
         {
             if (ModelState.IsValid)
             {
-                var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_configuration["BackendApi:LoginEndpoint"], jsonContent);
-
-                if (response.IsSuccessStatusCode)
+                var client = MyState.createClient();
+                var response = await client.PostAsJsonAsync("Authenticaton/Login", request);
+                if(response.IsSuccessStatusCode)
                 {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var loginResponse = JsonSerializer.Deserialize<LoginResponse>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    HttpContext.Session.SetString("Token", loginResponse.Token);
-                    HttpContext.Session.SetString("FirstName", loginResponse.FirstName);
-                    HttpContext.Session.SetString("LastName", loginResponse.LastName);
-
-                    return RedirectToAction("Welcome");
+                    var userInfo = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                    MyState.SaveToken(userInfo);
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                }
+
+                
             }
 
-            return View("Index");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         public IActionResult Welcome()
