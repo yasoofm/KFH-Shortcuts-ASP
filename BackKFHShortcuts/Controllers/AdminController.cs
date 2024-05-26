@@ -37,13 +37,13 @@ namespace BackKFHShortcuts.Controllers
         // GET: Admin/GetProduct?category=...
         [ProducesResponseType(typeof(Product), 200)]
         [HttpGet("GetProduct")]
-        public async Task<ActionResult<IEnumerable<Product>>> getProducts(string category)
+        public async Task<ActionResult<IEnumerable<Product>>> getProducts()
         {
             using (var context = _context)
             {
                 return Ok(await context.Products
                     .Include(x => x.Category)
-                    .Where(x => x.Category.Name == category && x.IsDeleted == false)
+                    .Where(x => x.IsDeleted == false)
                     .Select(x => new GetProductResponse
                 {
                         Id = x.Id,
@@ -53,6 +53,7 @@ namespace BackKFHShortcuts.Controllers
                         TargetAudience = x.TargetAudience,
                         Description = x.Description,
                         CategoryName = x.Category.Name,
+                        AwardedPoints = x.AwardedPoints,
                 }).ToListAsync());
             }
         }
@@ -60,6 +61,7 @@ namespace BackKFHShortcuts.Controllers
         // POST: Admin/AddCategory
         [HttpPost("AddCategory")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddCategory(AddCategoryRequest request)
         {
             using(var context = _context)
@@ -74,6 +76,7 @@ namespace BackKFHShortcuts.Controllers
         [HttpPost("AddProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddProduct(AddProductRequest request)
         {
             using (var context = _context)
@@ -134,10 +137,12 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
+        // PATCH: Admin/EditProduct?Id=...
         [HttpPatch("EditProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> EditProduct(int Id, AddProductRequest request)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> EditProduct(int Id, EditProductRequest request)
         {
             using(var context = _context)
             {
@@ -157,7 +162,7 @@ namespace BackKFHShortcuts.Controllers
                 }
                 if(request.AwardedPoints != null)
                 {
-                    product.AwardedPoints = request.AwardedPoints;
+                    product.AwardedPoints = (int)request.AwardedPoints;
                 }
                 if(request.TargetAudience != null)
                 {
@@ -183,6 +188,52 @@ namespace BackKFHShortcuts.Controllers
 
                 await context.SaveChangesAsync();
                 return Ok();
+            }
+        }
+
+        // PATCH: Admin/EditCategory?Id=...
+        [HttpPatch("EditCategory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> EditCategory(int Id, EditCategoryRequest request)
+        {
+            using (var context = _context)
+            {
+                var category = await context.Categories.FindAsync(Id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                if (request.Name != null)
+                {
+                    category.Name = request.Name;
+                }
+
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [ProducesResponseType(typeof(List<ProductRequestResponse>), StatusCodes.Status200OK)]
+        [HttpGet("GetProductRequest")]
+        public async Task<ActionResult<List<ProductRequestResponse>>> GetProductRequest()
+        {
+            using (var context = _context)
+            {
+                var productRequests = context.ProductRequests.Include(x => x.Product).Include(x => x.User).Select(x => new ProductRequestResponse
+                {
+                    Id = x.Id,
+                    ClientName = x.ClientName,
+                    ClientNumber = x.ClientNumber,
+                    NumberOfPoints = x.Product.AwardedPoints,
+                    ProductId = x.Product.Id,
+                    ProductTitle = x.Product.Name,
+                    EmployeeId = x.User.Id,
+                    EmployeeName = $"{x.User.FirstName} {x.User.LastName}",
+                }).ToList();
+                return Ok(productRequests);
             }
         }
 

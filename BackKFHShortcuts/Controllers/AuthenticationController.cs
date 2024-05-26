@@ -33,6 +33,7 @@ namespace BackKFHShortcuts.Controllers
         public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
             var result = _tokenService.GenerateToken(request.Email, request.Password);
+            
             if (result.IsValid)
             {
                 return Ok(result.Response);
