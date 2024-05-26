@@ -30,8 +30,8 @@ namespace BackKFHShortcuts.Controllers
         {
             using (var context = _context)
             {
-                return Ok(await context.Categories.Where(x => x.IsDeleted == false).Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name}).ToListAsync());
-            }   
+                return Ok(await context.Categories.Where(x => x.IsDeleted == false).Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name }).ToListAsync());
+            }
         }
 
         // GET: Admin/GetProduct?category=...
@@ -45,7 +45,7 @@ namespace BackKFHShortcuts.Controllers
                     .Include(x => x.Category)
                     .Where(x => x.IsDeleted == false)
                     .Select(x => new GetProductResponse
-                {
+                    {
                         Id = x.Id,
                         Name = x.Name,
                         Image = x.Image,
@@ -54,7 +54,7 @@ namespace BackKFHShortcuts.Controllers
                         Description = x.Description,
                         CategoryName = x.Category.Name,
                         AwardedPoints = x.AwardedPoints,
-                }).ToListAsync());
+                    }).ToListAsync());
             }
         }
 
@@ -64,7 +64,7 @@ namespace BackKFHShortcuts.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddCategory(AddCategoryRequest request)
         {
-            using(var context = _context)
+            using (var context = _context)
             {
                 await context.Categories.AddAsync(new Category { Name = request.Name, });
                 await context.SaveChangesAsync();
@@ -74,7 +74,7 @@ namespace BackKFHShortcuts.Controllers
 
         // POST: Admin/AddProduct
         [HttpPost("AddProduct")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddProduct(AddProductRequest request)
@@ -82,20 +82,22 @@ namespace BackKFHShortcuts.Controllers
             using (var context = _context)
             {
                 var category = await context.Categories.Where(x => x.Name == request.CategoryName && x.IsDeleted == false).SingleOrDefaultAsync();
-                if(category == null) 
+                if (category == null)
                 {
                     return NotFound();
                 }
-                await context.Products.AddAsync(new Product 
-                { 
+                await context.Products.AddAsync(new Product
+                {
                     Name = request.Name,
                     AwardedPoints = request.AwardedPoints,
-                    Category = category, Description = request.Description,
-                    Image = request.Image, Sharia = request.Shariah,
-                    TargetAudience = request.TargetAudience 
+                    Category = category,
+                    Description = request.Description,
+                    Image = request.Image,
+                    Sharia = request.Shariah,
+                    TargetAudience = request.TargetAudience
                 });
                 await context.SaveChangesAsync();
-                return Created();
+                return NoContent();
             }
         }
 
@@ -105,10 +107,10 @@ namespace BackKFHShortcuts.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> RemoveCategory(int Id)
         {
-            using( var context = _context)
+            using (var context = _context)
             {
                 var category = await context.Categories.FindAsync(Id);
-                if(category == null)
+                if (category == null)
                 {
                     return NotFound();
                 }
@@ -144,7 +146,7 @@ namespace BackKFHShortcuts.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> EditProduct(int Id, EditProductRequest request)
         {
-            using(var context = _context)
+            using (var context = _context)
             {
                 var product = await context.Products.FindAsync(Id);
                 if (product == null)
@@ -152,7 +154,7 @@ namespace BackKFHShortcuts.Controllers
                     return NotFound();
                 }
 
-                if(request.Name != null)
+                if (request.Name != null)
                 {
                     product.Name = request.Name;
                 }
@@ -160,26 +162,26 @@ namespace BackKFHShortcuts.Controllers
                 {
                     product.Description = request.Description;
                 }
-                if(request.AwardedPoints != null)
+                if (request.AwardedPoints != null)
                 {
                     product.AwardedPoints = (int)request.AwardedPoints;
                 }
-                if(request.TargetAudience != null)
+                if (request.TargetAudience != null)
                 {
                     product.TargetAudience = request.TargetAudience;
                 }
-                if(request.Image != null)
+                if (request.Image != null)
                 {
                     product.Image = request.Image;
                 }
-                if(request.Shariah != null)
+                if (request.Shariah != null)
                 {
                     product.Sharia = request.Shariah;
                 }
-                if(request.CategoryName != null)
+                if (request.CategoryName != null)
                 {
                     var newCategory = await context.Categories.Where(x => x.Name == request.CategoryName).FirstOrDefaultAsync();
-                    if (newCategory != null)
+                    if (newCategory == null)
                     {
                         return NotFound();
                     }
@@ -216,6 +218,7 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
+        // Get: Admin/GetProductRequest
         [ProducesResponseType(typeof(List<ProductRequestResponse>), StatusCodes.Status200OK)]
         [HttpGet("GetProductRequest")]
         public async Task<ActionResult<List<ProductRequestResponse>>> GetProductRequest()
@@ -237,80 +240,15 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
-        // GET: api/Admin/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        // GET: Admin/Rewards
+        [HttpGet("Rewards")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<GetRewardResponse>>> GetRewards()
         {
-            var category = await _context.Categories.FindAsync(id);
-
-            if (category == null)
+            using (var context = _context)
             {
-                return NotFound();
+                return Ok(await context.Rewards.ToListAsync());
             }
-            return category;
-        }
-
-        // PUT: api/Admin/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
-        {
-            if (id != category.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(category).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Admin
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
-        {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
-        }
-
-        // DELETE: api/Admin/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }
