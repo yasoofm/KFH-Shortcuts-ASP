@@ -1,103 +1,33 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using FrontKFHShortcuts.Models;
 using FrontKFHShortcuts.Models.Request;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace FrontKFHShortcuts.Controllers
 {
     public class RequestController : Controller
     {
-        private static List<RequestResponse> requests = new List<RequestResponse>
-        {
-            new RequestResponse
-            {
-                Id = 1,
-                EmployeeId = 1,
-                EmployeeName = "NAME NAME",
-                ClientNumber = "+965 XXXXXXXX",
-                ClientName = "NAME NAME",
-                ProductId = 1,
-                ProductTitle = "Organic Cream",
-                NumberOfPoints = 1234
-            }
-            // Add more sample data as needed
-        };
+        private readonly GlobalAppState MyState;
 
-        public IActionResult Index()
+        public RequestController(GlobalAppState state)
         {
-            return View(requests);
+            MyState = state;
         }
 
-        public IActionResult Create()
+        // GET: Request
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Create(RequestResponse request)
-        {
-            if (ModelState.IsValid)
+            var client = MyState.createClient();
+            var response = await client.GetAsync("Admin/GetProductRequest");
+            if (response.IsSuccessStatusCode)
             {
-                request.Id = requests.Count > 0 ? requests[^1].Id + 1 : 1;
-                requests.Add(request);
-                return RedirectToAction("Index");
+                var requests = await response.Content.ReadFromJsonAsync<List<RequestResponse>>();
+                return View(requests);
             }
-            return View(request);
-        }
-
-        public IActionResult Edit(int id)
-        {
-            var request = requests.FirstOrDefault(r => r.Id == id);
-            if (request == null)
-            {
-                return NotFound();
-            }
-            return View(request);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(RequestResponse request)
-        {
-            if (ModelState.IsValid)
-            {
-                var existingRequest = requests.FirstOrDefault(r => r.Id == request.Id);
-                if (existingRequest == null)
-                {
-                    return NotFound();
-                }
-                existingRequest.EmployeeId = request.EmployeeId;
-                existingRequest.EmployeeName = request.EmployeeName;
-                existingRequest.ClientName = request.ClientName;
-                existingRequest.ClientNumber = request.ClientNumber;
-                existingRequest.ProductId = request.ProductId;
-                existingRequest.ProductTitle = request.ProductTitle;
-                existingRequest.NumberOfPoints = request.NumberOfPoints;
-
-                return RedirectToAction("Index");
-            }
-            return View(request);
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var request = requests.FirstOrDefault(r => r.Id == id);
-            if (request == null)
-            {
-                return NotFound();
-            }
-            return View(request);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var request = requests.FirstOrDefault(r => r.Id == id);
-            if (request == null)
-            {
-                return NotFound();
-            }
-            requests.Remove(request);
-            return RedirectToAction("Index");
+            return View(null);
         }
     }
 }
