@@ -41,8 +41,8 @@
                                 @Html.DisplayFor(modelItem => item.Id)
                             </td>
                             <td>
-                                <a href="@Url.Action("Edit", "Category", new { id = item.Id })" class="btn btn-success">✎</a>
-                                <a href="@Url.Action("Delete", "Category", new { id = item.Id })" class="btn btn-danger">✖</a>
+                                <a href="@Url.Action("Edit", "Category", item)" class="btn btn-success">✎</a>
+                                <a href="@Url.Action("Delete", "Category", item)" class="btn btn-danger">✖</a>
                             </td>
                         </tr>
                     }
