@@ -31,6 +31,8 @@ namespace FrontKFHShortcuts.Controllers
             return new List<CategoryResponse>();
         }
 
+
+        // GET: Products
         public async Task<IActionResult> Index()
         {
             var client = MyState.createClient();
@@ -108,7 +110,7 @@ namespace FrontKFHShortcuts.Controllers
                 if (ModelState.IsValid)
                 {
                     var client = MyState.createClient();
-                    var response = await client.PutAsJsonAsync($"Admin/EditProduct?Id={id}", product);
+                    var response = await client.PatchAsJsonAsync($"Admin/EditProduct?Id={id}", product);
                     if (response.IsSuccessStatusCode)
                     {
                         return RedirectToAction("Index");
@@ -146,20 +148,11 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        public async Task<IActionResult> Details(int id)
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(ProductResponse product)
         {
-            var client = MyState.createClient();
-            var response = await client.GetAsync($"Admin/GetProduct?Id={id}");
-            if (response.IsSuccessStatusCode)
-            {
-                var product = await response.Content.ReadFromJsonAsync<ProductResponse>();
-                if (product == null)
-                {
-                    return NotFound();
-                }
-                return View(product);
-            }
-            return NotFound();
+            return View(product);
+        }
         }
     }
 }
