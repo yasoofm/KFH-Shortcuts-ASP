@@ -1,33 +1,54 @@
 ﻿@model IEnumerable<FrontKFHShortcuts.Models.Reward.RewardResponse>
 
-<div class="container mt-5">
+@{
+    ViewBag.Title = "Reward List";
+}
+
+<div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <h2>Reward Requests List</h2>
-            <a href="@Url.Action("Create", "Reward")" class="btn btn-primary">Add Reward</a>
-            <table class="table mt-3">
+        <div class="col-12">
+            <h2 class="text-center">Reward List</h2>
+            <p class="text-center">Manage your rewards here.<br>Click the title of the reward to edit or delete it.</p>
+            <a href="@Url.Action("Create", "Reward")" class="btn btn-primary mb-3">+ Add Reward</a>
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>Title</th>
-                        <th>Required Points</th>
-                        <th>Usage</th>
-                        <th>Due Date</th>
-                        <th>Actions</th>
+                        <th>
+                            Title
+                        </th>
+                        <th>
+                            Required Points
+                        </th>
+                        <th>
+                            Usage
+                        </th>
+                        <th>
+                            Due Date
+                        </th>
+                        <th>
+                            Action
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var reward in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@reward.Id</td>
-                            <td>@Html.ActionLink(reward.Title, "Details", new { id = reward.Id })</td>
-                            <td>@reward.RequieredPoints</td>
-                            <td>@reward.Usage</td>
-                            <td>@reward.DueDate.ToString("MM/dd/yyyy")</td>
                             <td>
-                                <button onclick="location.href='@Url.Action("EditReward", "Reward", new { id = reward.Id })'" class="btn btn-sm btn-warning">Edit</button>
-                                <button onclick="location.href='@Url.Action("DeleteReward", "Reward", new { id = reward.Id })'" class="btn btn-sm btn-danger">Delete</button>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RequiredPoints)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Usages)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDate)
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Edit", "Reward", item)" class="btn btn-success">✎</a>
+                                <a href="@Url.Action("Delete", "Reward", item)" class="btn btn-danger">✖</a>
                             </td>
                         </tr>
                     }
@@ -35,4 +56,20 @@
             </table>
         </div>
     </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+</style>
 </div>

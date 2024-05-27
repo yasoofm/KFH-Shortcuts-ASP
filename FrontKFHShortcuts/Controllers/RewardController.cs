@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using YourNamespace.Controllers;
+﻿using FrontKFHShortcuts.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 using System.Linq;
 using FrontKFHShortcuts.Models.Reward;
 using System.Reflection.Metadata.Ecma335;
@@ -9,17 +12,25 @@ namespace YourNamespace.Controllers
 {
     public class RewardController : Controller
     {
-        private static List<RewardResponse> rewards = new List<RewardResponse>
-        {
-            new RewardResponse { Id = 1, Title = "Organic Cream", RequieredPoints = 1234, Usage = 5, DueDate = DateTime.Now.AddMonths(1) },
-            new RewardResponse { Id = 2, Title = "Home ", RequieredPoints = 14, Usage = 2, DueDate = DateTime.Now.AddMonths(1) }
-,
-            // Add more rewards as needed
-        };
 
-        public IActionResult Index()
+        private readonly GlobalAppState MyState;
+
+        public RewardController(GlobalAppState state)
         {
-            return View(rewards);
+            MyState = state;
+        }
+
+        // GET: Reward
+        public async Task<IActionResult> Index()
+        {
+            var client = MyState.createClient();
+            var response = await client.GetAsync("Admin/GetReward");
+            if (response.IsSuccessStatusCode)
+            {
+                var rewards = await response.Content.ReadFromJsonAsync<List<RewardResponse>>();
+                return View(rewards);
+            }
+            return View(null);
         }
 
         // GET: Reward/Create
@@ -31,79 +42,92 @@ namespace YourNamespace.Controllers
 
         // POST: Reward/Create
         [HttpPost]
-        public IActionResult Create(AddRewardRequest request)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(RewardRequest reward)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var newReward = new RewardResponse
+                if (ModelState.IsValid)
                 {
-                    Id = rewards.Count + 1,
-                    Title = request.Title,
-                    RequieredPoints = request.RequieredPoints,
-                    Usage = request.Usage,
-                    DueDate = request.DueDate
-                };
-
-                rewards.Add(newReward);
-                return RedirectToAction(nameof(Index));
+                    var client = MyState.createClient();
+                    var response = await client.PostAsJsonAsync("Admin/AddReward", reward);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                return View(reward);
             }
-            return View(request);
+            catch
+            {
+                return View(reward);
+            }
         }
 
-        public IActionResult EditReward(int id)
+        // GET: Reward/Edit/5
+        public async Task<IActionResult> Edit(RewardResponse reward)
         {
-            var reward = rewards.FirstOrDefault(r => r.Id == id);
-            if (reward == null)
-            {
-
-                return NotFound();
-            }
-            var request = new AddRewardRequest
+            var rewardRequest = new RewardRequest
             {
                 Title = reward.Title,
-                RequieredPoints = reward.RequieredPoints,
-                Usage = reward.Usage,
+                RequiredPoints = reward.RequiredPoints,
+                Usages = reward.Usages,
                 DueDate = reward.DueDate
             };
-            return View(request);
+            ViewBag.RewardId = reward.Id; // Store the ID to use in the form
+            return View(rewardRequest);
         }
 
         [HttpPost]
-        public IActionResult EditReward(int id, AddRewardRequest request) {
-
-            if (ModelState.IsValid)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, RewardRequest reward)
+        {
+            try
             {
-                var reward = rewards.FirstOrDefault(reward => reward.Id == id);
-                if (reward != null)
+                if (ModelState.IsValid)
                 {
-
-                    reward.Title = request.Title;
-                    reward.RequieredPoints = request.RequieredPoints;
-                    reward.Usage = request.Usage;
-                    reward.DueDate = request.DueDate;
-
-                    return RedirectToAction(nameof(Index));
-
+                    var client = MyState.createClient();
+                    var response = await client.PatchAsJsonAsync($"Admin/EditReward?Id={id}", reward);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
-                return NotFound();
+                return RedirectToAction("Index");
             }
-
-            return View(request);
-         
-        
+            catch
+            {
+                return RedirectToAction("Index");
+            }
         }
 
-        public IActionResult DeleteReward(int id) {
+        // GET: Reward/Delete/5
+        [HttpGet]
+        public async Task<IActionResult> Delete(RewardResponse reward)
+        {
+            return View(reward);
+        }
 
-            var reward = rewards.FirstOrDefault(r => r.Id == id);
-            if (reward != null) {
-
-                rewards.Remove(reward);
-                return RedirectToAction(nameof(Index));
-
+        // POST: Reward/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var client = MyState.createClient();
+                var response = await client.DeleteAsync($"Admin/RemoveReward?Id={id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Index");
             }
 
-            return NotFound();
         }
     }
 }

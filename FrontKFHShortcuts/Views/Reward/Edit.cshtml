@@ -1,17 +1,17 @@
 ﻿@model FrontKFHShortcuts.Models.Reward.RewardRequest
 
 @{
-    ViewData["Title"] = "Add Reward";
+    ViewData["Title"] = "Edit Reward";
 }
 
-<h1>Add Reward</h1>
+<h1>Edit Reward</h1>
 
 <h4>Reward</h4>
 <hr />
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="post">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" name="Id" value="@ViewBag.RewardId" />
             <input type="hidden" name="_method" value="PATCH" />
@@ -51,18 +51,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-
-    .btn-primary {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
-    }
-
-    .btn-secondary {
-        background-color: #ffc107;
-        border-color: #ffc107;
-    }
-</style>
