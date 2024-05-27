@@ -28,9 +28,12 @@ namespace BackKFHShortcuts.Controllers
 
         // POST: Authentication/Login
         [HttpPost("[action]")]
+        [ProducesResponseType(typeof(LoginResponse), 200)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
             var result = _tokenService.GenerateToken(request.Email, request.Password);
+            
             if (result.IsValid)
             {
                 return Ok(result.Response);

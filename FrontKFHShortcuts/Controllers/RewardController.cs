@@ -1,15 +1,18 @@
 ﻿using FrontKFHShortcuts.Models;
-using FrontKFHShortcuts.Models.Reward;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Linq;
+using FrontKFHShortcuts.Models.Reward;
+using System.Reflection.Metadata.Ecma335;
 
-namespace FrontKFHShortcuts.Controllers
+namespace YourNamespace.Controllers
 {
     public class RewardController : Controller
     {
+
         private readonly GlobalAppState MyState;
 
         public RewardController(GlobalAppState state)
@@ -33,6 +36,7 @@ namespace FrontKFHShortcuts.Controllers
         // GET: Reward/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -123,6 +127,7 @@ namespace FrontKFHShortcuts.Controllers
             {
                 return RedirectToAction("Index");
             }
+
         }
     }
 }
