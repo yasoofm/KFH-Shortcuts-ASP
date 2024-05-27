@@ -4,6 +4,7 @@ using FrontKFHShortcuts.Models.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -30,7 +31,6 @@ namespace FrontKFHShortcuts.Controllers
             return new List<CategoryResponse>();
         }
 
-        // GET: Products
         public async Task<IActionResult> Index()
         {
             var client = MyState.createClient();
@@ -43,12 +43,9 @@ namespace FrontKFHShortcuts.Controllers
                     return View(products);
                 }
             }
-            // Log or debug information
-            System.Diagnostics.Debug.WriteLine("No products found or API call failed.");
-            return View(new List<ProductResponse>()); // Return an empty list instead of null
+            return View(new List<ProductResponse>());
         }
 
-        // GET: Products/Create
         public async Task<IActionResult> Create()
         {
             var categories = await GetCategories();
@@ -56,7 +53,6 @@ namespace FrontKFHShortcuts.Controllers
             return View();
         }
 
-        // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductRequest product)
@@ -84,7 +80,6 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        // GET: Products/Edit/5
         public async Task<IActionResult> EditProduct(ProductResponse product)
         {
             var productRequest = new ProductRequest
@@ -100,11 +95,10 @@ namespace FrontKFHShortcuts.Controllers
             ViewBag.ProductId = product.Id; // Store the ID to use in the form
             var client = MyState.createClient();
             var categories = await client.GetFromJsonAsync<IEnumerable<CategoryResponse>>("Admin/GetCategory");
-            ViewBag.Categories = new SelectList(categories,"Name","Name",product.CategoryName); //(SelectList)
+            ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
             return View(productRequest);
         }
 
-        // POST: Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProduct(int id, ProductRequest product)
@@ -124,17 +118,13 @@ namespace FrontKFHShortcuts.Controllers
                 ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
                 return View(product);
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine($"Exceptioon occured while editing product with ID {id}: {ex.Message}");
                 var categories = await GetCategories();
                 ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
                 return View(product);
             }
         }
-
-       
-        // POST: Products/Delete/5
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -156,7 +146,6 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        // GET: Products/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var client = MyState.createClient();

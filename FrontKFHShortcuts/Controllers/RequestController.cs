@@ -17,7 +17,6 @@ namespace FrontKFHShortcuts.Controllers
             MyState = state;
         }
 
-        // GET: Request
         public async Task<IActionResult> Index()
         {
             var client = MyState.createClient();

@@ -1,18 +1,15 @@
 ﻿using FrontKFHShortcuts.Models;
+using FrontKFHShortcuts.Models.Reward;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Linq;
-using FrontKFHShortcuts.Models.Reward;
-using System.Reflection.Metadata.Ecma335;
 
 namespace FrontKFHShortcuts.Controllers
 {
     public class RewardController : Controller
     {
-
         private readonly GlobalAppState MyState;
 
         public RewardController(GlobalAppState state)
@@ -20,7 +17,6 @@ namespace FrontKFHShortcuts.Controllers
             MyState = state;
         }
 
-        // GET: Reward
         public async Task<IActionResult> Index()
         {
             var client = MyState.createClient();
@@ -33,14 +29,11 @@ namespace FrontKFHShortcuts.Controllers
             return View(null);
         }
 
-        // GET: Reward/Create
         public IActionResult Create()
         {
-
             return View();
         }
 
-        // POST: Reward/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RewardRequest reward)
@@ -64,7 +57,6 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        // GET: Reward/Edit/5
         public async Task<IActionResult> Edit(RewardResponse reward)
         {
             var rewardRequest = new RewardRequest
@@ -101,14 +93,12 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        // GET: Reward/Delete/5
         [HttpGet]
         public async Task<IActionResult> Delete(RewardResponse reward)
         {
             return View(reward);
         }
 
-        // POST: Reward/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -127,7 +117,6 @@ namespace FrontKFHShortcuts.Controllers
             {
                 return RedirectToAction("Index");
             }
-
         }
     }
 }

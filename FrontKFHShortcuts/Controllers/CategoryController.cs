@@ -17,7 +17,6 @@ namespace FrontKFHShortcuts.Controllers
             MyState = state;
         }
 
-        // GET: Category
         public async Task<IActionResult> Index()
         {
             var client = MyState.createClient();
@@ -30,13 +29,11 @@ namespace FrontKFHShortcuts.Controllers
             return View(null);
         }
 
-        // GET: Category/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryRequest category)
@@ -60,15 +57,14 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-        // GET: Category/Edit/5
         public async Task<IActionResult> Edit(CategoryResponse category)
         {
-                var categoryRequest = new CategoryRequest
-                {
-                    Name = category.Name
-                };
-                ViewBag.CategoryId = category.Id; // Store the ID to use in the form
-                return View(categoryRequest);
+            var categoryRequest = new CategoryRequest
+            {
+                Name = category.Name
+            };
+            ViewBag.CategoryId = category.Id; // Store the ID to use in the form
+            return View(categoryRequest);
         }
 
         [HttpPost]
@@ -94,19 +90,12 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
-
-
-
-
-        // GET: Category/Delete/5
         [HttpGet]
         public async Task<IActionResult> Delete(CategoryResponse category)
         {
             return View(category);
         }
 
-
-        // POST: Category/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
