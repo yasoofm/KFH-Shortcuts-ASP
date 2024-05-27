@@ -1,81 +1,93 @@
-﻿using FrontKFHShortcuts.Models.Catalog;
+﻿using FrontKFHShortcuts.Models;
+using FrontKFHShortcuts.Models.Catalog;
 using FrontKFHShortcuts.Models.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace FrontKFHShortcuts.Controllers
 {
     public class ProductController : Controller
     {
-        private static List<CategoryResponse> categories = new List<CategoryResponse>
-        {
-            new CategoryResponse { Id = 1, Name = "Beauty" },
-            new CategoryResponse { Id = 2, Name = "Grocery" },
-            new CategoryResponse { Id = 3, Name = "Food" },
-            new CategoryResponse { Id = 4, Name = "Furniture" },
-            new CategoryResponse { Id = 5, Name = "Shoes" },
-            new CategoryResponse { Id = 6, Name = "Frames" },
-            new CategoryResponse { Id = 7, Name = "Jewellery" }
-        };
+        private readonly GlobalAppState MyState;
 
-        private static List<ProductResponse> products = new List<ProductResponse>
+        public ProductController(GlobalAppState state)
         {
-            new ProductResponse { Id = 1, Name = "Organic Cream", Image = "path/to/image1.jpg", Shariah = "Compliant", TargetAudience = "Adults", Description = "Organic cream for beauty", CategoryName = "Beauty" , AwardedPoints=100},
-            new ProductResponse { Id = 2, Name = "Rain Umbrella", Image = "path/to/image2.jpg", Shariah = "Non-compliant", TargetAudience = "All", Description = "Umbrella for rainy days", CategoryName = "Grocery", AwardedPoints=50},
-            // Add more products as needed
-        };
+            MyState = state;
+        }
+
+        private async Task<List<CategoryResponse>> GetCategories()
+        {
+            var client = MyState.createClient();
+            var response = await client.GetAsync("Admin/GetCategory");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<CategoryResponse>>();
+            }
+            return new List<CategoryResponse>();
+        }
 
         // GET: Products
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-           ViewBag.Categories = categories;
-            return View(products);
+            var client = MyState.createClient();
+            var response = await client.GetAsync("Admin/GetProduct");
+            if (response.IsSuccessStatusCode)
+            {
+                var products = await response.Content.ReadFromJsonAsync<List<ProductResponse>>();
+                if (products != null && products.Any())
+                {
+                    return View(products);
+                }
+            }
+            // Log or debug information
+            System.Diagnostics.Debug.WriteLine("No products found or API call failed.");
+            return View(new List<ProductResponse>()); // Return an empty list instead of null
         }
 
         // GET: Products/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var categories = await GetCategories();
             ViewBag.Categories = new SelectList(categories, "Name", "Name");
             return View();
         }
 
         // POST: Products/Create
         [HttpPost]
-        public ActionResult Create(ProductRequest request)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ProductRequest product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var newProduct = new ProductResponse
+                if (ModelState.IsValid)
                 {
-                    Id = products.Count + 1,
-                    Name = request.Name,
-                    Image = request.Image,
-                    Shariah = request.Shariah ?? "Unknown",
-                    TargetAudience = request.TargetAudience ?? "Unknown",
-                    Description = request.Description ?? "No description",
-                    CategoryName = request.CategoryName,
-                    AwardedPoints = request.AwardedPoints
-                };
-
-                products.Add(newProduct);
-                return RedirectToAction("Index");
+                    var client = MyState.createClient();
+                    var response = await client.PostAsJsonAsync("Admin/AddProduct", product);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                var categories = await GetCategories();
+                ViewBag.Categories = new SelectList(categories, "Name", "Name");
+                return View(product);
             }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name");
-            return View(request);
+            catch
+            {
+                var categories = await GetCategories();
+                ViewBag.Categories = new SelectList(categories, "Name", "Name");
+                return View(product);
+            }
         }
 
         // GET: Products/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> EditProduct(ProductResponse product)
         {
-            var product = products.Find(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            var request = new ProductRequest
+            var productRequest = new ProductRequest
             {
                 Name = product.Name,
                 Image = product.Image,
@@ -85,113 +97,80 @@ namespace FrontKFHShortcuts.Controllers
                 CategoryName = product.CategoryName,
                 AwardedPoints = product.AwardedPoints
             };
-
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
-            return View(request);
+            ViewBag.ProductId = product.Id; // Store the ID to use in the form
+            var client = MyState.createClient();
+            var categories = await client.GetFromJsonAsync<IEnumerable<CategoryResponse>>("Admin/GetCategory");
+            ViewBag.Categories = new SelectList(categories,"Name","Name",product.CategoryName); //(SelectList)
+            return View(productRequest);
         }
 
         // POST: Products/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, ProductRequest request)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProduct(int id, ProductRequest product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var existingProduct = products.Find(p => p.Id == id);
-                if (existingProduct != null)
+                if (ModelState.IsValid)
                 {
-                    existingProduct.Name = request.Name;
-                    existingProduct.Image = request.Image;
-                    existingProduct.Shariah = request.Shariah;
-                    existingProduct.TargetAudience = request.TargetAudience;
-                    existingProduct.Description = request.Description;
-                    existingProduct.CategoryName = request.CategoryName;
-                    existingProduct.AwardedPoints = request.AwardedPoints;
+                    var client = MyState.createClient();
+                    var response = await client.PutAsJsonAsync($"Admin/EditProduct?Id={id}", product);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
-                return RedirectToAction("Index");
-            }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", request.CategoryName);
-            return View(request);
-        }
-
-        // GET: Products/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var product = products.Find(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
-
-      
-        public ActionResult DeleteConfirmed(int id)
-        {
-            var product = products.Find(p => p.Id == id);
-            if (product != null)
-            {
-                products.Remove(product);
-            }
-            return RedirectToAction("Index");
-        }
-
-
-        public ActionResult EditProduct(int id)
-        {
-            var product = products.Find(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            var request = new ProductRequest
-            {
-                Name = product.Name,
-                Image = product.Image,
-                Shariah = product.Shariah,
-                TargetAudience = product.TargetAudience,
-                Description = product.Description,
-                CategoryName = product.CategoryName,
-                AwardedPoints =product.AwardedPoints
-            };
-
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
-            return View(request);
-        }
-
-        // POST: Products/Edit/5
-        [HttpPost]
-        public ActionResult EditProduct(int id, ProductRequest request)
-        {
-            if (ModelState.IsValid)
-            {
-                var existingProduct = products.Find(p => p.Id == id);
-                if (existingProduct != null)
-                {
-                    existingProduct.Name = request.Name;
-                    existingProduct.Image = request.Image;
-                    existingProduct.Shariah = request.Shariah;
-                    existingProduct.TargetAudience = request.TargetAudience;
-                    existingProduct.Description = request.Description;
-                    existingProduct.CategoryName = request.CategoryName;
-                    existingProduct.AwardedPoints = request.AwardedPoints;
-                }
-                return RedirectToAction("Index");
-            }
-            ViewBag.Categories = new SelectList(categories, "Name", "Name", request.CategoryName);
-            return View(request);
-        }
-
-
-        public ActionResult Details(int id)
-        {
-
-            var product = products.Find(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+                var categories = await GetCategories();
+                ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
                 return View(product);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exceptioon occured while editing product with ID {id}: {ex.Message}");
+                var categories = await GetCategories();
+                ViewBag.Categories = new SelectList(categories, "Name", "Name", product.CategoryName);
+                return View(product);
+            }
+        }
+
+       
+        // POST: Products/Delete/5
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var client = MyState.createClient();
+                var response = await client.DeleteAsync($"Admin/RemoveProduct?Id={id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var client = MyState.createClient();
+            var response = await client.GetAsync($"Admin/GetProduct?Id={id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var product = await response.Content.ReadFromJsonAsync<ProductResponse>();
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return View(product);
+            }
+            return NotFound();
         }
     }
 }

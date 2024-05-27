@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductResponse>
+﻿@model IEnumerable<FrontKFHShortcuts.Models.Product.ProductResponse>
 
 <div class="row mb-3">
     <div class="col-md-12">
@@ -6,37 +6,51 @@
     </div>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Product</th>
-            <th>Image</th>
-            <th>Shariah</th>
-            <th>Target Audience</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Awarded Points</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@item.Id</td>
-                <td>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</td>
-                <td><img src="@item.Image" alt="@item.Image" style="width:50px;height:50px;" /></td>
-                <td>@item.Shariah</td>
-                <td>@item.TargetAudience</td>
-                <td>@item.Description</td>
-                <td>@item.CategoryName</td>
-                <td>@item.AwardedPoints</td>
-                <td>
-                    @Html.ActionLink("Edit", "EditProduct", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "DeleteConfirmed", new { id = item.Id })
-                </td>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Shariah</th>
+                <th>Target Audience</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Awarded Points</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</td>
+                    <td><img src="@item.Image" alt="@item.Image" style="width:50px;height:50px;" /></td>
+                    <td>@item.Shariah</td>
+                    <td>@item.TargetAudience</td>
+                    <td>@item.Description</td>
+                    <td>@item.CategoryName</td>
+                    <td>@item.AwardedPoints</td>
+                    <td>
+                        @using (Html.BeginForm("EditProduct", "Product", new { id = item.Id }, FormMethod.Get))
+                        {
+                            <button type="submit" class="btn btn-sm btn-warning">Edit</button>
+                        }
+                        @using (Html.BeginForm("DeleteConfirmed", "Product", new { id = item.Id }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No products available.</p>
+}
