@@ -1,0 +1,53 @@
+﻿@model FrontKFHShortcuts.Models.Reward.RewardRequest
+
+@{
+    ViewData["Title"] = "Edit Reward";
+}
+
+<h1>Edit Reward</h1>
+
+<h4>Reward</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="Id" value="@ViewBag.RewardId" />
+            <input type="hidden" name="_method" value="PATCH" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequiredPoints" class="control-label"></label>
+                <input asp-for="RequiredPoints" class="form-control" />
+                <span asp-validation-for="RequiredPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Usages" class="control-label"></label>
+                <input asp-for="Usages" class="form-control" />
+                <span asp-validation-for="Usages" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
