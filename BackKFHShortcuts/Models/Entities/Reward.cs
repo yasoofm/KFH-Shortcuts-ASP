@@ -3,7 +3,7 @@
     public class Reward
     {
         public int Id { get; set; }
-        public string Title { get; set; }
+        public required string Title { get; set; }
         public int RequiredPoints { get; set; }
         public int Usages { get; set; }
         public DateTime DueDate { get; set; }

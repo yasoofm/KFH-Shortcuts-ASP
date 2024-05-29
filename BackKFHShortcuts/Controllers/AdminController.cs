@@ -10,6 +10,7 @@ using BackKFHShortcuts.Models.Entities;
 using BackKFHShortcuts.Models.Request;
 using BackKFHShortcuts.Models.Responses;
 using Microsoft.IdentityModel.Tokens;
+using Humanizer;
 
 namespace BackKFHShortcuts.Controllers
 {
@@ -226,7 +227,7 @@ namespace BackKFHShortcuts.Controllers
         {
             using (var context = _context)
             {
-                var productRequests = context.ProductRequests.Include(x => x.Product).Include(x => x.User).Select(x => new ProductRequestResponse
+                var productRequests = await context.ProductRequests.Include(x => x.Product).Include(x => x.User).Select(x => new ProductRequestResponse
                 {
                     Id = x.Id,
                     ClientName = x.ClientName,
@@ -236,7 +237,7 @@ namespace BackKFHShortcuts.Controllers
                     ProductTitle = x.Product.Name,
                     EmployeeId = x.User.Id,
                     EmployeeName = $"{x.User.FirstName} {x.User.LastName}",
-                }).ToList();
+                }).ToListAsync();
                 return Ok(productRequests);
             }
         }
@@ -310,7 +311,7 @@ namespace BackKFHShortcuts.Controllers
                 }
                 if(!request.Title.IsNullOrEmpty())
                 {
-                    reward.Title = request.Title;
+                    reward.Title = request.Title!;
                 }
                 if(request.Usages != null)
                 {
@@ -343,6 +344,47 @@ namespace BackKFHShortcuts.Controllers
                     Id = x.Id,
                     RewardName = x.Reward.Title,
                 }).ToListAsync();
+            }
+        }
+
+        // GET: Admin/Dashboard
+        [ProducesResponseType(typeof(DashboardResponse), StatusCodes.Status200OK)]
+        [HttpGet("Dashboard")]
+        public async Task<ActionResult<DashboardResponse>> Dashboard()
+        {
+            using(var context = _context)
+            {
+                var TotalRequests = await context.ProductRequests.CountAsync();
+                var MonthlyRequests = new List<RequestPerMonth>();
+
+                for(var i = 0; i < 12; i++)
+                {
+                    var Month = DateTime.Today.AddMonths(-i);
+                    var MonthlyRequest = await context.ProductRequests.Where(x => x.CreateAt.Month == Month.Month).CountAsync();
+                    MonthlyRequests.Add(new RequestPerMonth { Month = Month.ToString("MMM"), Requests = MonthlyRequest });
+                }
+
+                var ProductRequests = await context.Products
+                    .OrderByDescending(x => x.ProductRequests.Count)
+                    .Take(10)
+                    .Select(x => new RequestPerProduct { Image = x.Image, ProductName = x.Name, Requests = x.ProductRequests.Count })
+                    .ToListAsync();
+
+                var TopProducts = ProductRequests.Take(5).ToList();
+
+                var LeastProducts = await context.Products.Include(x => x.ProductRequests)
+                    .OrderBy(x => x.ProductRequests.Count)
+                    .Take(5)
+                    .Select(x => new RequestPerProduct { Image = x.Image, ProductName = x.Name, Requests = x.ProductRequests.Count})
+                    .ToListAsync();
+
+                return Ok(new DashboardResponse { 
+                    TotalRequests = TotalRequests,
+                    MonthlyRequests = MonthlyRequests,
+                    ProductRequests = ProductRequests,
+                    LeastProducts = LeastProducts,
+                    TopProducts = TopProducts
+                });
             }
         }
     }

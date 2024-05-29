@@ -4,6 +4,7 @@ using BackKFHShortcuts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackKFHShortcuts.Migrations
 {
     [DbContext(typeof(ShortcutsContext))]
-    partial class ShortcutsContextModelSnapshot : ModelSnapshot
+    [Migration("20240528062056_ProductRequest-CreateAt")]
+    partial class ProductRequestCreateAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,9 +104,6 @@ namespace BackKFHShortcuts.Migrations
                     b.Property<string>("ClientNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -221,7 +221,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = true,
                             KFH_Id = 1111,
                             LastName = "Mandani",
-                            Password = "$2a$11$FkmzE5zFW1nnkLArL9JiseHLq5dgBB8yyL9QtRTVO/PuXIo3t5Q3.",
+                            Password = "$2a$11$HiUcBVnePpugOjFVkgaOquJtGP2GbLSp6E2T4tubWjmLb4FBVOtQu",
                             Points = 0
                         },
                         new
@@ -232,7 +232,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = false,
                             KFH_Id = 1234,
                             LastName = "Mandani",
-                            Password = "$2a$11$Bz4Hq/62Jexnv9VSE9cpquolDLIx1yeDpba2zoL2XdqGddQQrVBTW",
+                            Password = "$2a$11$rwduTq5kwaTE3X1F.qolw.guWjE8s/6biiyRYU5SBH/nXrI8ceJPq",
                             Points = 0
                         });
                 });

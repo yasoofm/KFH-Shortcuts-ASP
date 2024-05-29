@@ -91,7 +91,8 @@ namespace BackKFHShortcuts.Controllers
                     ClientName = request.ClientName,
                     ClientNumber = request.ClientNumber,
                     Product = product,
-                    User = user
+                    User = user,
+                    CreateAt = DateTime.UtcNow,
                 });
                 await context.SaveChangesAsync();
                 return NoContent();
