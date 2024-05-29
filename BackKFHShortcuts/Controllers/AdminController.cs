@@ -9,6 +9,7 @@ using BackKFHShortcuts.Models;
 using BackKFHShortcuts.Models.Entities;
 using BackKFHShortcuts.Models.Request;
 using BackKFHShortcuts.Models.Responses;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BackKFHShortcuts.Controllers
 {
@@ -24,7 +25,7 @@ namespace BackKFHShortcuts.Controllers
         }
 
         // GET: Admin/GetCategory
-        [ProducesResponseType(typeof(Category), 200)]
+        [ProducesResponseType(typeof(List<GetCategoryResponse>), 200)]
         [HttpGet("GetCategory")]
         public async Task<ActionResult<IEnumerable<GetCategoryResponse>>> getCategories()
         {
@@ -35,9 +36,9 @@ namespace BackKFHShortcuts.Controllers
         }
 
         // GET: Admin/GetProduct?category=...
-        [ProducesResponseType(typeof(Product), 200)]
+        [ProducesResponseType(typeof(List<GetProductResponse>), 200)]
         [HttpGet("GetProduct")]
-        public async Task<ActionResult<IEnumerable<Product>>> getProducts()
+        public async Task<ActionResult<IEnumerable<GetProductResponse>>> getProducts()
         {
             using (var context = _context)
             {
@@ -240,14 +241,108 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
-        // GET: Admin/Rewards
-        [HttpGet("Rewards")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        // GET: Admin/GetReward
+        [HttpGet("GetReward")]
+        [ProducesResponseType(typeof(List<GetRewardResponse>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<GetRewardResponse>>> GetRewards()
         {
             using (var context = _context)
             {
-                return Ok(await context.Rewards.ToListAsync());
+                return Ok(await context.Rewards.Where(x => !x.IsDeleted).Select(x => new GetRewardResponse
+                {
+                    DueDate = x.DueDate,
+                    Id = x.Id,
+                    RequiredPoints = x.RequiredPoints,
+                    Title = x.Title,
+                    Usages = x.Usages
+                }).ToListAsync());
+            }
+        }
+
+        // POST: Admin/AddReward
+        [HttpPost("AddReward")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> AddReward(AddRewardRequest request)
+        {
+            using (var context = _context)
+            {
+                _ = await context.Rewards.AddAsync(new Reward
+                {
+                    Title = request.Title,
+                    RequiredPoints = request.RequiredPoints,
+                    Usages = request.Usages,
+                    DueDate = request.DueDate
+                });
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        // DELETE: Admin/RemoveReward?Id=...
+        [HttpDelete("RemoveReward")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> RemoveReward(int Id)
+        {
+            using (var context = _context)
+            {
+                var reward = await context.Rewards.FindAsync(Id);
+                if(reward == null)
+                {
+                    return NotFound();
+                }
+                reward.IsDeleted = true;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        // PATCH: Admin/EditReward?Id=...
+        [HttpPatch("EditReward")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> EditReward(int Id, EditRewardRequest request)
+        {
+            using (var context = _context)
+            {
+                var reward = await context.Rewards.FindAsync(Id);
+                if (reward == null)
+                {
+                    return NotFound();
+                }
+                if(!request.Title.IsNullOrEmpty())
+                {
+                    reward.Title = request.Title;
+                }
+                if(request.Usages != null)
+                {
+                    reward.Usages = (int) request.Usages;
+                }
+                if(request.DueDate != null)
+                {
+                    reward.DueDate = (DateTime) request.DueDate;
+                }
+                if(request.RequiredPoints != null)
+                {
+                    reward.RequiredPoints = (int) request.RequiredPoints;
+                }
+                await context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
+
+        // GET: Admin/GetRewardRequest
+        [HttpGet("GetRewardRequest")]
+        [ProducesResponseType(typeof(List<RewardRequestResponse>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<RewardRequestResponse>>> GetRewardRequest()
+        {
+            using (var context = _context)
+            {
+                return await context.RewardRequests.Include(x => x.User).Include(x => x.Reward).Select(x => new RewardRequestResponse
+                {
+                    ClaimedAt = x.ClaimedAt,
+                    EmployeeName = $"{x.User.FirstName} {x.User.LastName}",
+                    Id = x.Id,
+                    RewardName = x.Reward.Title,
+                }).ToListAsync();
             }
         }
     }

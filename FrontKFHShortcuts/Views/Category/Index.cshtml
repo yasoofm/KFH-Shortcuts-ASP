@@ -1,68 +1,54 @@
 ﻿@model IEnumerable<FrontKFHShortcuts.Models.Catalog.CategoryResponse>
 
-@{
-    ViewBag.Title = "Category List";
-}
-
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-12">
-            <h2 class="text-center">Category List</h2>
-            <p class="text-center">Use category list to describe your overall core business from the provided list.<br>Click the name of the category where you want to add a list item.</p>
-            <a href="@Url.Action("Create", "Category")" class="btn btn-primary mb-3">+ Add Category</a>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" />
-                        </th>
-                        <th>
-                            Category
-                        </th>
-                        <th>
-                            Id
-                        </th>
-                        <th>
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                <input type="checkbox" />
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Id)
-                            </td>
-                            <td>
-                                <a href="@Url.Action("Edit", "Category", item)" class="btn btn-success">✎</a>
-                                <a href="@Url.Action("Delete", "Category", item)" class="btn btn-danger">✖</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="header-title">
+                        <h4 class="card-title">Category List</h4>
+                    </div>
+                    <div class="header-action">
+                        <a href="/Category/Create" class="btn btn-primary">Add Category</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Name</td>
+                                        <td>
+                                            <div class="list-user-action">
+                                                <a href="/Category/Edit/@item.Id" class="btn btn-sm bg-primary" data-toggle="tooltip" data-placement="top" title="Edit"><i class="ri-pencil-line mr-0"></i></a>
+                                                <a href="/Category/Delete/@item.Id" class="btn btn-sm bg-primary" data-toggle="tooltip" data-placement="top" title="Delete"><i class="ri-delete-bin-line mr-0"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row justify-content-between mt-3">
+                        <div class="col-md-6">
+                            <span>Showing @Model.Count() entries</span>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Pagination can be added here if needed -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-
-    .table {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-    }
-</style>

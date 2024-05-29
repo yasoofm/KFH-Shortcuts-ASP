@@ -21,9 +21,10 @@ namespace BackKFHShortcuts.Controllers
             _context = shortcutsContext;
         }
 
-        [ProducesResponseType(typeof(Category), 200)]
+        // GET: User/GetCategory
+        [ProducesResponseType(typeof(List<GetCategoryResponse>), 200)]
         [HttpGet("GetCategory")]
-        public async Task<ActionResult<IEnumerable<Category>>> getCategories()
+        public async Task<ActionResult<IEnumerable<GetCategoryResponse>>> getCategories()
         {
             using(var context = _context)
             {
@@ -31,9 +32,10 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(Product), 200)]
+        // GET: User/GetProduct?category=...
+        [ProducesResponseType(typeof(List<GetProductResponse>), 200)]
         [HttpGet("GetProduct")]
-        public async Task<ActionResult<IEnumerable<Product>>> getProducts(string category)
+        public async Task<ActionResult<IEnumerable<GetProductResponse>>> getProducts(string category)
         {
             using( var context = _context)
             {
@@ -54,6 +56,7 @@ namespace BackKFHShortcuts.Controllers
             }
         }
 
+        // POST: User/CreateProductRequest
         [HttpPost("CreateProductRequest")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -81,6 +84,8 @@ namespace BackKFHShortcuts.Controllers
                     return NotFound();
                 }
 
+                user.Points += product.AwardedPoints;
+
                 _ = await context.ProductRequests.AddAsync(new ProductRequest
                 {
                     ClientName = request.ClientName,
@@ -90,6 +95,77 @@ namespace BackKFHShortcuts.Controllers
                 });
                 await context.SaveChangesAsync();
                 return NoContent();
+            }
+        }
+
+        // POST: User/RewardRequest?Id=...
+        [HttpPost("RewardRequest")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult> RewardRequest(int Id)
+        {
+            using(var context = _context)
+            {
+                var userClaim = User.FindFirst("userId");
+                if (userClaim == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var userId = int.Parse(userClaim.Value);
+                var user = await context.Users.FindAsync(userId);
+                if(user == null)
+                {
+                    return NotFound();
+                }
+
+                var reward = await context.Rewards.FindAsync(Id);
+                if (reward == null)
+                {
+                    return NotFound();
+                }
+
+                if(reward.Usages <= 0)
+                {
+                    return BadRequest();
+                }
+
+                if(user.Points < reward.RequiredPoints)
+                {
+                    return BadRequest();
+                }
+
+                reward.Usages--;
+                user.Points -= reward.RequiredPoints;
+
+                _ = await context.RewardRequests.AddAsync(new RewardRequest
+                {
+                    ClaimedAt = DateTime.UtcNow,
+                    Reward = reward,
+                    User = user
+                });
+                await context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
+
+        // GET: User/GetReward
+        [HttpGet("GetReward")]
+        [ProducesResponseType(typeof(List<GetRewardResponse>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<GetRewardResponse>>> GetRewards()
+        {
+            using (var context = _context)
+            {
+                return Ok(await context.Rewards.Where(x => !x.IsDeleted).Select(x => new GetRewardResponse
+                {
+                    DueDate = x.DueDate,
+                    Id = x.Id,
+                    RequiredPoints = x.RequiredPoints,
+                    Title = x.Title,
+                    Usages = x.Usages
+                }).ToListAsync());
             }
         }
     }
