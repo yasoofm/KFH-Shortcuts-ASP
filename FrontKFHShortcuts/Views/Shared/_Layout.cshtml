@@ -1,49 +1,148 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FrontKFHShortcuts.styles.css" asp-append-version="true" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - KFH</title>
+    <link rel="stylesheet" href="~/css/backend-plugin.min.css">
+    <link rel="stylesheet" href="~/css/backend.css?v=1.0.0">
+    <link rel="stylesheet" href="~/vendor/fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
+    <link rel="stylesheet" href="~/vendor/remixicon/fonts/remixicon.css">
+    <style>
+        .navbar {
+            background-color: #f8f9fa;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .navbar .nav-left {
+                display: flex;
+                align-items: center;
+            }
+
+            .navbar .logo {
+                height: 50px;
+                width: auto;
+                margin-right: 10px;
+                padding-left: 14px; /* Added padding to the left */
+            }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-item .nav-link {
+            padding: 15px 20px;
+        }
+
+        .container-fluid {
+            padding: 0;
+        }
+
+        .content {
+            margin-top: 70px; /* Adjust this value if your navbar height changes */
+            padding: 20px; /* Added padding to the content */
+        }
+
+        .iq-footer {
+            padding: 20px 0;
+            background: #f8f9fa;
+        }
+
+        .footer-text {
+            margin: 0;
+        }
+
+        .main-container {
+            padding-top: 70px; /* Ensure space for the fixed navbar */
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+<body class="">
+    @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
+    {
+        <div class="header-container">
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-light border-bottom mb-3">
+                    <div class="container-fluid">
+                        <div class="nav-left">
+                            <a href="#">
+                                <img src="~/images/KFH.png" alt="Kuwait Finance House Logo" class="logo">
+                            </a>
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KFH Shortcuts</a>
+                        </div>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Reward</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Request" asp-action="Index">Request</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        </div>
+    }
+    <div class="main-container">
+        <div class="container content">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+        <!-- Footer Start -->
+        <footer class="iq-footer">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FrontKFHShortcuts</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                                    <li class="list-inline-item"><a href="#">Terms of Use</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6 text-right">
+                                <span class="mr-1">@DateTime.Now.Year ©</span> <a href="#">KFH</a>.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </footer>
+        <!-- Footer End -->
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - FrontKFHShortcuts - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <!-- Backend Bundle JavaScript -->
+    <script src="~/js/backend-bundle.min.js"></script>
+    <!-- Table Treeview JavaScript -->
+    <script src="~/js/table-treeview.js"></script>
+    <!-- Chart Custom JavaScript -->
+    <script src="~/js/customizer.js"></script>
+    <!-- Chart Custom JavaScript -->
+    <script async src="~/js/chart-custom.js"></script>
+    <!-- app JavaScript -->
+    <script src="~/js/app.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

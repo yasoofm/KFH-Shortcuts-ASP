@@ -1,5 +1,5 @@
 
- $(function () {
+$(function () {
     var
         $table = $('#tree-table-1'),
         rows = $table.find('tr');
@@ -65,8 +65,8 @@
 });
 
 
- // table 2
- $(function () {
+// table 2
+$(function () {
     var
         $table = $('#tree-table-2'),
         rows = $table.find('tr');
@@ -132,7 +132,7 @@
 });
 
 // table 3
- $(function () {
+$(function () {
     var
         $table = $('#tree-table-3'),
         rows = $table.find('tr');
@@ -197,8 +197,8 @@
     };
 });
 
- // table 4
- $(function () {
+// table 4
+$(function () {
     var
         $table = $('#tree-table-4'),
         rows = $table.find('tr');
@@ -262,8 +262,8 @@
         }
     };
 });
- // table 5
- $(function () {
+// table 5
+$(function () {
     var
         $table = $('#tree-table-5'),
         rows = $table.find('tr');
@@ -330,7 +330,7 @@
 
 
 // table 6
- $(function () {
+$(function () {
     var
         $table = $('#tree-table-6'),
         rows = $table.find('tr');
@@ -396,7 +396,7 @@
 });
 
 // table 7
- $(function () {
+$(function () {
     var
         $table = $('#tree-table-7'),
         rows = $table.find('tr');
@@ -461,8 +461,8 @@
     };
 });
 
- // table 8
- $(function () {
+// table 8
+$(function () {
     var
         $table = $('#tree-table-8'),
         rows = $table.find('tr');

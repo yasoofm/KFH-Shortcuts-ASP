@@ -125,6 +125,9 @@ namespace BackKFHShortcuts.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -134,6 +137,9 @@ namespace BackKFHShortcuts.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Usages")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -212,7 +218,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = true,
                             KFH_Id = 1111,
                             LastName = "Mandani",
-                            Password = "$2a$11$/koF6JpaaLjDehxiWfO7XemynqMp4QkIL2eLZWzfIcUuo2PSWh0Di",
+                            Password = "$2a$11$8w.pdYoET1yAwo4BqgLTy.QNzhiw5yzC/bEz9LLwGGOYtwM.PoN/y",
                             Points = 0
                         },
                         new
@@ -223,7 +229,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = false,
                             KFH_Id = 1234,
                             LastName = "Mandani",
-                            Password = "$2a$11$QxYsUM6kTduGM/7ArVBN0.QIO8zQKdwwZVjSihZvR.FSVpC4CMysS",
+                            Password = "$2a$11$1PH7Pcyoiq2OI86PtRQxoOG6ktoOM.7eK.zs6uaUdi5lTsNvXNGJ.",
                             Points = 0
                         });
                 });
