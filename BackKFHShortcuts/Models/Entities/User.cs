@@ -12,6 +12,7 @@
         public bool IsAdmin { get; set; }
         public List<ProductRequest> ProductRequests { get; set; }
         public List<RewardRequest> Rewards { get; set; }
+        public List<Message> Messages { get; set; }
         public static User Create(int id, string email, string password, string firstName, string Lastname, int points, int kfh_id, bool isAdmin = false)
         {
             return new User

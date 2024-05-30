@@ -15,9 +15,11 @@ namespace BackKFHShortcuts.Controllers
     public class UserController : ControllerBase
     {
         private readonly ShortcutsContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UserController(ShortcutsContext shortcutsContext)
+        public UserController(ShortcutsContext shortcutsContext, IConfiguration config)
         {
+            _configuration = config;
             _context = shortcutsContext;
         }
 
@@ -26,7 +28,7 @@ namespace BackKFHShortcuts.Controllers
         [HttpGet("GetCategory")]
         public async Task<ActionResult<IEnumerable<GetCategoryResponse>>> getCategories()
         {
-            using(var context = _context)
+            using (var context = _context)
             {
                 return Ok(await context.Categories.Where(x => x.IsDeleted == false).Select(x => new GetCategoryResponse { Id = x.Id, Name = x.Name }).ToListAsync());
             }
@@ -37,7 +39,7 @@ namespace BackKFHShortcuts.Controllers
         [HttpGet("GetProduct")]
         public async Task<ActionResult<IEnumerable<GetProductResponse>>> getProducts(string category)
         {
-            using( var context = _context)
+            using (var context = _context)
             {
                 return Ok(await context.Products
                     .Include(x => x.Category)
@@ -73,7 +75,7 @@ namespace BackKFHShortcuts.Controllers
                 var userId = int.Parse(userClaim.Value);
 
                 var product = await context.Products.FindAsync(request.ProductId);
-                if(product == null)
+                if (product == null)
                 {
                     return NotFound();
                 }
@@ -107,7 +109,7 @@ namespace BackKFHShortcuts.Controllers
         [Authorize(Roles = "User")]
         public async Task<ActionResult> RewardRequest(int Id)
         {
-            using(var context = _context)
+            using (var context = _context)
             {
                 var userClaim = User.FindFirst("userId");
                 if (userClaim == null)
@@ -117,7 +119,7 @@ namespace BackKFHShortcuts.Controllers
 
                 var userId = int.Parse(userClaim.Value);
                 var user = await context.Users.FindAsync(userId);
-                if(user == null)
+                if (user == null)
                 {
                     return NotFound();
                 }
@@ -128,12 +130,12 @@ namespace BackKFHShortcuts.Controllers
                     return NotFound();
                 }
 
-                if(reward.Usages <= 0)
+                if (reward.Usages <= 0)
                 {
                     return BadRequest();
                 }
 
-                if(user.Points < reward.RequiredPoints)
+                if (user.Points < reward.RequiredPoints)
                 {
                     return BadRequest();
                 }
@@ -167,6 +169,111 @@ namespace BackKFHShortcuts.Controllers
                     Title = x.Title,
                     Usages = x.Usages
                 }).ToListAsync());
+            }
+        }
+
+        // GET: User/Points
+        [HttpGet("Points")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize]
+        public async Task<ActionResult> GetPoints()
+        {
+            using (var context = _context)
+            {
+                var userClaim = User.FindFirst("userId");
+                if (userClaim == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var userId = int.Parse(userClaim.Value);
+                var user = await context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(new { Points = user.Points });
+            }
+        }
+
+        // GET: User/RequestHistory
+        [HttpGet("RequestHistory")]
+        [ProducesResponseType(typeof(List<ProductHistoryResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
+        public async Task<ActionResult<List<ProductHistoryResponse>>> RewardHistory()
+        {
+            using(var context = _context)
+            {
+                var userClaim = User.FindFirst("userId");
+                if (userClaim == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var userId = int.Parse(userClaim.Value);
+                var user = await context.Users.Include(x => x.ProductRequests).ThenInclude(x => x.Product).Where(x => x.Id == userId).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var History = user.ProductRequests.Select(x => new ProductHistoryResponse { Points = x.Product.AwardedPoints, ProductName = x.Product.Name });
+                return Ok(History);
+            }
+        }
+
+        // POST: User/Chatbot
+        [HttpPost("Chatbot")]
+        [ProducesResponseType(typeof(OpenAIResponse), StatusCodes.Status200OK)]
+        [Authorize]
+        public async Task<ActionResult<OpenAIResponse>> Chatbot(string query)
+        {
+            using(var context = _context)
+            {
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["OPENAI_APIKEY"]}");
+
+                var userClaim = User.FindFirst("userId");
+                if (userClaim == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var userId = int.Parse(userClaim.Value);
+                var user = await context.Users.Include(x => x.Messages).Where(x => x.Id == userId).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.Messages.Add(new Message { Role = "user", Content = query, User = user });
+                await context.SaveChangesAsync();
+ 
+                var Messages = user.Messages.Select(x => new MessageModel { Role = x.Role, Content = x.Content }).ToList();
+                var response = await client.PostAsJsonAsync("https://api.openai.com/v1/chat/completions", new OpenAIRequest
+                {
+                    Messages = Messages,
+                    Model = "gpt-4o"
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<OpenAIResponse>();
+                    if (result != null)
+                    {
+                        var Choice = result.Choices.FirstOrDefault();
+                        if (Choice != null)
+                        {
+                            user.Messages.Add(new Message { Role = Choice.Message.Role, Content = Choice.Message.Content, User = user});
+                            await context.SaveChangesAsync();
+                        }
+                        return Ok(result);
+                    }
+                }
+                return BadRequest(response.StatusCode);
             }
         }
     }
