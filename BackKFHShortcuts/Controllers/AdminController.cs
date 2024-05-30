@@ -364,6 +364,8 @@ namespace BackKFHShortcuts.Controllers
                     MonthlyRequests.Add(new RequestPerMonth { Month = Month.ToString("MMM"), Requests = MonthlyRequest });
                 }
 
+                MonthlyRequests.Reverse();
+
                 var ProductRequests = await context.Products
                     .OrderByDescending(x => x.ProductRequests.Count)
                     .Take(10)
@@ -384,6 +386,33 @@ namespace BackKFHShortcuts.Controllers
                     ProductRequests = ProductRequests,
                     LeastProducts = LeastProducts,
                     TopProducts = TopProducts
+                });
+            }
+        }
+
+        // GET: Admin/Product?ProductId=...
+        [HttpGet("Product")]
+        [ProducesResponseType(typeof(GetProductResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetProduct(int ProductId)
+        {
+            using(var context = _context)
+            {
+                var Product = await context.Products.Where(x => x.Id == ProductId).Include(x => x.Category).FirstOrDefaultAsync();
+                if (Product == null)
+                {
+                    return NotFound();
+                }
+                return Ok(new GetProductResponse
+                {
+                    AwardedPoints = Product.AwardedPoints,
+                    CategoryName = Product.Category.Name,
+                    Id = Product.Id,
+                    Name = Product.Name,
+                    Description = Product.Description,
+                    Image = Product.Image,
+                    Shariah = Product.Sharia,
+                    TargetAudience = Product.TargetAudience
                 });
             }
         }

@@ -11,6 +11,7 @@ namespace BackKFHShortcuts.Models
         public DbSet<ProductRequest> ProductRequests { get; set; }
         public DbSet<Reward> Rewards { get; set; }
         public DbSet<RewardRequest> RewardRequests { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public ShortcutsContext(DbContextOptions<ShortcutsContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
