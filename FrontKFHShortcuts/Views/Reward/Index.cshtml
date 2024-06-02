@@ -22,7 +22,9 @@
         <div class="col-12">
             <h2 class="text-center">Reward List</h2>
             <p class="text-center">Manage your rewards here.<br>Click the title of the reward to edit or delete it.</p>
+
             <a href="@Url.Action("Create", "Reward")" class="btn btn-success">+ Add Reward</a>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -60,8 +62,10 @@
                                 @Html.DisplayFor(modelItem => item.DueDate)
                             </td>
                             <td>
+
                                 <a href="@Url.Action("Edit", "Reward", item)" class="btn btn-success">✎</a>
                                 <a href="@Url.Action("Delete", "Reward", item)" class="btn btn-intense-red">✖</a>
+
                             </td>
                         </tr>
                     }
