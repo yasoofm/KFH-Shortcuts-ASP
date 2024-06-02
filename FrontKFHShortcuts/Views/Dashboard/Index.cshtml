@@ -1,4 +1,4 @@
-﻿@model FrontKFHShortcuts.Models.Dashboard.DashboardMetrics
+﻿@model FrontKFHShortcuts.Models.Dashboard.DashboardRequest
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -15,29 +15,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Cost</h5>
-                    <p class="card-text">$@Model.TotalCost</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Products Sold</h5>
-                    <p class="card-text">@Model.ProductsSold</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Request per Month</h5>
+                    <h5 class="card-title">Requests per Month</h5>
                     <canvas id="requestPerMonthChart"></canvas>
                 </div>
             </div>
@@ -45,8 +29,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Request Summary</h5>
-                    <canvas id="requestSummaryChart"></canvas>
+                    <h5 class="card-title">Top Products Chart</h5>
+                    <canvas id="topProductsChart"></canvas>
                 </div>
             </div>
         </div>
@@ -57,25 +41,37 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Top Products</h5>
-                    @foreach (var product in Model.TopProducts)
-                    {
-                        <div class="product-item">
-                            <p>@product.ProductName - @product.Requests Requests</p>
-                        </div>
-                    }
+                    <div class="list-group">
+                        @foreach (var product in Model.TopProducts)
+                        {
+                            <a href="@Url.Action("ProductDetails", "Products", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@product.ProductName</h5>
+                                    <small>@product.Requests Requests</small>
+                                </div>
+                                <img src="@product.Image" alt="@product.ProductName" style="width:120px;height:60px;" />
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Lowest Products</h5>
-                    @foreach (var product in Model.LowestProducts)
-                    {
-                        <div class="product-item">
-                            <p>@product.ProductName - @product.Requests Requests</p>
-                        </div>
-                    }
+                    <h5 class="card-title">Least Products</h5>
+                    <div class="list-group">
+                        @foreach (var product in Model.LeastProducts)
+                        {
+                            <a href="@Url.Action("Details", "Product", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@product.ProductName</h5>
+                                    <small>@product.Requests Requests</small>
+                                </div>
+                                <img src="@product.Image" alt="@product.ProductName" style="width:120px;height:60px;" />
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,22 +81,24 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Data for Requests per Month chart
         var requestPerMonthCtx = document.getElementById('requestPerMonthChart').getContext('2d');
         var requestPerMonthChart = new Chart(requestPerMonthCtx, {
             type: 'line',
             data: {
-                labels: @Html.Raw(Json.Serialize(Model.RequestsPerMonth.Select(r => r.Month))),
+                labels: @Html.Raw(Json.Serialize(Model.MonthlyRequests.Select(r => r.Month))),
                 datasets: [{
                     label: 'Requests',
-                    data: @Html.Raw(Json.Serialize(Model.RequestsPerMonth.Select(r => r.Requests))),
+                    data: @Html.Raw(Json.Serialize(Model.MonthlyRequests.Select(r => r.Requests))),
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
             }
         });
 
-        var requestSummaryCtx = document.getElementById('requestSummaryChart').getContext('2d');
-        var requestSummaryChart = new Chart(requestSummaryCtx, {
+        // Data for Top Products chart
+        var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        var topProductsChart = new Chart(topProductsCtx, {
             type: 'bar',
             data: {
                 labels: @Html.Raw(Json.Serialize(Model.TopProducts.Select(p => p.ProductName))),
