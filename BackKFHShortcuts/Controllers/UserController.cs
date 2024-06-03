@@ -229,7 +229,7 @@ namespace BackKFHShortcuts.Controllers
         [HttpPost("Chatbot")]
         [ProducesResponseType(typeof(OpenAIResponse), StatusCodes.Status200OK)]
         [Authorize]
-        public async Task<ActionResult<OpenAIResponse>> Chatbot(string query)
+        public async Task<ActionResult<ChatbotResponse>> Chatbot(ChatbotRequest request)
         {
             using(var context = _context)
             {
@@ -249,7 +249,7 @@ namespace BackKFHShortcuts.Controllers
                     return NotFound();
                 }
 
-                user.Messages.Add(new Message { Role = "user", Content = query, User = user });
+                user.Messages.Add(new Message { Role = "user", Content = request.Message, User = user });
                 await context.SaveChangesAsync();
  
                 var Messages = user.Messages.Select(x => new MessageModel { Role = x.Role, Content = x.Content }).ToList();
@@ -269,8 +269,9 @@ namespace BackKFHShortcuts.Controllers
                         {
                             user.Messages.Add(new Message { Role = Choice.Message.Role, Content = Choice.Message.Content, User = user});
                             await context.SaveChangesAsync();
-                        }
-                        return Ok(result);
+
+                            return Ok(new ChatbotResponse { Message = Choice.Message.Content, Role = Choice.Message.Role });
+                        }       
                     }
                 }
                 return BadRequest(response.StatusCode);
