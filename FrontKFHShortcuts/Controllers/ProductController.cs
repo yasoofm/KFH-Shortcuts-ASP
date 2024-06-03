@@ -153,17 +153,5 @@ namespace FrontKFHShortcuts.Controllers
         {
             return View(product);
         }
-
-        public async Task<IActionResult> ProductDetails(string productName)
-        {
-            var client = MyState.createClient();
-            var response = await client.GetAsync($"Admin/Product?product={productName}");
-            if(response.IsSuccessStatusCode) 
-            {
-                var product = await response.Content.ReadFromJsonAsync<ProductResponse>();
-                return View("Details", product);
-            }
-            return RedirectToAction("Index");
-        }
         }
     }

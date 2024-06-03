@@ -44,7 +44,7 @@
                     <div class="list-group">
                         @foreach (var product in Model.TopProducts)
                         {
-                            <a href="@Url.Action("ProductDetails", "Product", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
+                            <a href="@Url.Action("ProductDetails", "Products", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">@product.ProductName</h5>
                                     <small>@product.Requests Requests</small>
@@ -63,7 +63,7 @@
                     <div class="list-group">
                         @foreach (var product in Model.LeastProducts)
                         {
-                            <a href="@Url.Action("ProductDetails", "Product", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
+                            <a href="@Url.Action("Details", "Product", new { productName = product.ProductName })" class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">@product.ProductName</h5>
                                     <small>@product.Requests Requests</small>
