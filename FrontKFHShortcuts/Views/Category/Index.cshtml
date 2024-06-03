@@ -43,11 +43,8 @@
                                         <td>@item.Id</td>
                                         <td>@item.Name</td>
                                         <td>
-                                            <div class="list-user-action">
-                                                @Html.ActionLink(routeValues: item, controllerName: "Category", actionName: "Edit", linkText: "Edit", htmlAttributes: new { @class = "btn btn-sm btn-success" })
-
-                                                <a href="/Category/Delete/@item.Id" class="btn btn-sm btn-intense-red" data-toggle="tooltip" data-placement="top" title="Delete"><i class="ri-delete-bin-line mr-0"></i></a>
-                                            </div>
+                                            <a href="@Url.Action("Edit", "Category", item)" class="btn btn-success" style="background-color: #008930">✎</a>
+                                            <a href="@Url.Action("Delete", "Category", item)" class="btn btn-danger" style="background-color: #dc3545">✖</a>
                                         </td>
                                     </tr>
                                 }
