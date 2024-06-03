@@ -1,5 +1,17 @@
 ﻿@model IEnumerable<FrontKFHShortcuts.Models.Catalog.CategoryResponse>
 
+<style>
+    .btn-intense-red {
+        background-color: #ff0000;
+        border-color: #cc0000;
+        color: white;
+    }
+
+        .btn-intense-red:hover {
+            background-color: #cc0000;
+            border-color: #990000;
+        }
+</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
@@ -9,7 +21,9 @@
                         <h4 class="card-title">Category List</h4>
                     </div>
                     <div class="header-action">
-                        <a href="/Category/Create" class="btn btn-primary" style="background-color: #008930">Add Category</a>
+
+                        <a href="/Category/Create" class="btn btn-sm btn-success">Add Category</a>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -42,7 +56,6 @@
                             <span>Showing @Model.Count() entries</span>
                         </div>
                         <div class="col-md-6">
-                            <!-- Pagination can be added here if needed -->
                         </div>
                     </div>
                 </div>
