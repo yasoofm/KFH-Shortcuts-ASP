@@ -23,7 +23,8 @@
 
 <div class="row mb-3">
     <div class="col-md-12">
-        <a href="@Url.Action("Create", "Product")" class="btn btn-success">Add Product</a>
+        <a href="@Url.Action("Create", "Product")" class="btn btn-primary" style="background-color: #008930">+ Add Product</a>
+
     </div>
 </div>
 
@@ -56,12 +57,8 @@
                     <td>@item.CategoryName</td>
                     <td>@item.AwardedPoints</td>
                     <td>
-                        @Html.ActionLink(routeValues: item, controllerName: "Product", actionName: "EditProduct", linkText: "Edit", htmlAttributes: new { @class = "btn btn-sm btn-success" })
-                        @using (Html.BeginForm("DeleteConfirmed", "Product", new { id = item.Id }, FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-intense-red">Delete</button>
-                        }
+                        <a href="@Url.Action("EditProduct", "Product", item)" class="btn btn-success" style="background-color: #008930">✎</a>
+                        <a href="@Url.Action("Delete", "Product", item)" class="btn btn-danger" style="background-color: #dc3545">✖</a>
                     </td>
                 </tr>
             }

@@ -128,6 +128,13 @@ namespace FrontKFHShortcuts.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(ProductResponse product)
+        {
+            return View(product);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -165,5 +172,5 @@ namespace FrontKFHShortcuts.Controllers
             }
             return RedirectToAction("Index");
         }
-        }
+    }
     }

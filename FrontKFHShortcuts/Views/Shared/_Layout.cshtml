@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="~/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
     <link rel="stylesheet" href="~/vendor/remixicon/fonts/remixicon.css">
     <style>
+
+        header, .header, nav {
+            background: linear-gradient(to right, green, black);
+            color: white; 
+        }
+
+        .header {
+            background: linear-gradient(to right, green, black);
+            color: white;
+        }
+
         .navbar {
             background-color: #f8f9fa;
             padding: 0;
@@ -97,6 +108,11 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
+            background: none;
+        }
+
+        .header .logo-text, .header h1, .navbar-brand {
+            color: white;
         }
     </style>
 </head>
@@ -109,7 +125,7 @@
                         <a href="Dashboard">
                             <img src="~/images/KFH.png" alt="Kuwait Finance House Logo" class="logo">
                         </a>
-                        <a class="navbar-brand" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
+                        <a class="navbar-brand" style="color: white" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
                     </div>
                 </div>
             </nav>
