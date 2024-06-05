@@ -11,11 +11,13 @@ using BackKFHShortcuts.Models.Request;
 using BackKFHShortcuts.Models.Responses;
 using Microsoft.IdentityModel.Tokens;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackKFHShortcuts.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly ShortcutsContext _context;
