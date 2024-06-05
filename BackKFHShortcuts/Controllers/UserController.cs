@@ -12,6 +12,7 @@ namespace BackKFHShortcuts.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class UserController : ControllerBase
     {
         private readonly ShortcutsContext _context;
@@ -62,7 +63,6 @@ namespace BackKFHShortcuts.Controllers
         [HttpPost("CreateProductRequest")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [Authorize(Roles = "User")]
         public async Task<ActionResult> CreateProductRequest(RequestProductRequest request)
         {
             using (var context = _context)
@@ -106,7 +106,6 @@ namespace BackKFHShortcuts.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "User")]
         public async Task<ActionResult> RewardRequest(int Id)
         {
             using (var context = _context)
@@ -176,7 +175,6 @@ namespace BackKFHShortcuts.Controllers
         [HttpGet("Points")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize]
         public async Task<ActionResult> GetPoints()
         {
             using (var context = _context)
@@ -202,7 +200,6 @@ namespace BackKFHShortcuts.Controllers
         [HttpGet("RequestHistory")]
         [ProducesResponseType(typeof(List<ProductHistoryResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
         public async Task<ActionResult<List<ProductHistoryResponse>>> RewardHistory()
         {
             using(var context = _context)
@@ -228,7 +225,6 @@ namespace BackKFHShortcuts.Controllers
         // POST: User/Chatbot
         [HttpPost("Chatbot")]
         [ProducesResponseType(typeof(OpenAIResponse), StatusCodes.Status200OK)]
-        [Authorize]
         public async Task<ActionResult<ChatbotResponse>> Chatbot(ChatbotRequest request)
         {
             using(var context = _context)
