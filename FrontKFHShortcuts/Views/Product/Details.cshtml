@@ -1,53 +1,48 @@
 ﻿@model ProductResponse
 
+<style>
+    .product-container {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-               <style>
-                   .product-container{
-                   width: 80%;
-                   margin: 0 auto;
-                   padding: 20px;
-                   border: 1px solid #ccc;
-                   border-radius: 10px; 
-                   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                   }
+    .product-header {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-                   .product-header{
-                       font-size: 24px;
-                       font-weight: bold;
-                       margin-bottom: 10px;
-                   }
+    .product-details {
+        margin-bottom: 10px;
+        white-space: pre-wrap; /* Ensures text wraps */
+    }
 
-                   .product-details{
+    .product-audience {
+        margin-top: 20px;
+    }
 
-                       margin-bottom:10px;
-                   }
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+</style>
 
-                   .product-audience{
-                   margin-top: 20px;
-                   }
-
-                   .product-image{
-                   max-width:100%;
-                   height: auto;
-                   margin-bottom: 20px;
-                   text-align: center;
-                   }
-
-               </style>
-
-               
-                    <div class="product-image">
-                        <img src="@Model.Image" class="card-img-top" alt="@Model.Name" style="width: 50%">
-                    </div>
-                <div class="product-container">
-                <div class="card-body">
-
-                    <h5 class="product-header">@Model.Name</h5>
-                    <p class="product-details"><strong>Product Details:</strong> @Model.Description</p>
-                    <p class="product-details"><strong>Shariah:</strong> @Model.Shariah</p>
-                    <p class="product-details"><strong>Target Audience:</strong> @Model.TargetAudience</p>
-                    <p class="product-details"><strong>Category:</strong> @Model.CategoryName</p>
-                    <p class="product-details"><strong>Awarded Points:</strong> @Model.AwardedPoints</p>
-                </div>
-                </div>
-       
+<div class="product-image">
+    <img src="@Model.Image" class="card-img-top" alt="@Model.Name" style="width: 50%">
+</div>
+<div class="product-container">
+    <div class="card-body">
+        <h5 class="product-header">@Model.Name</h5>
+        <p class="product-details"><strong>Product Details:</strong> @Model.Description</p>
+        <p class="product-details"><strong>Shariah:</strong> @Model.Shariah</p>
+        <p class="product-details"><strong>Target Audience:</strong> @Model.TargetAudience</p>
+        <p class="product-details"><strong>Category:</strong> @Model.CategoryName</p>
+        <p class="product-details"><strong>Awarded Points:</strong> @Model.AwardedPoints</p>
+    </div>
+</div>
