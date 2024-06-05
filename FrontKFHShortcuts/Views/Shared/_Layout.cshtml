@@ -12,12 +12,13 @@
     <style>
 
         header, .header, nav {
-            background: linear-gradient(to right, green, black);
-            color: white; 
+            background: linear-gradient(to right, #006a00, #141412);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow here */
         }
 
         .header {
-            background: linear-gradient(to right, green, black);
+            background: linear-gradient(to right, #006a00, #141412);
             color: white;
         }
 
@@ -82,7 +83,7 @@
         }
 
         .content {
-            margin-top: 70px; /* Adjust this value if your navbar height changes */
+            margin-top: 80px; /* Adjust this value if your navbar height changes */
             padding: 20px; /* Added padding to the content */
         }
 
@@ -96,16 +97,16 @@
         }
 
         .toggle-btn {
+            color: white;
             position: fixed;
-            top: 50px;
-            left:25px;
+            top: 42px;
+            left: 25px;
             z-index: 1001;
             background-color: #f8f9fa;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
             padding: 5px 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             background: none;
@@ -121,39 +122,39 @@
         <header>
             <nav class="navbar navbar-expand-sm navbar-light border-bottom mb-3">
                 <div class="container">
-                    <div class="nav-center">
-                        <a href="Dashboard">
-                            <img src="~/images/KFH.png" alt="Kuwait Finance House Logo" class="logo">
+                    <div class="nav-center" style="display: flex; flex-direction: column;">
+                        <a href="Dashboard" style="padding-top: 1.5rem;">
+                            <img src="~/images/logo_kfh_shortcuts.png" alt="Kuwait Finance House Logo" class="logo">
                         </a>
-                        <a class="navbar-brand" style="color: white" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
+                        <a class="navbar-brand" style="color: white; padding-top: 0rem; padding-bottom: 1.5rem" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
                     </div>
                 </div>
             </nav>
         </header>
     </div>
-            @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
-            {
-                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-                <div class="sidebar" id="sidebar">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Reward</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Request" asp-action="Index">Request</a>
-                        </li>
-                    </ul>
-                </div>
-            }
+    @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
+    {
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <div class="sidebar" id="sidebar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Reward" asp-action="Index">Reward</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Request" asp-action="Index">Request</a>
+                </li>
+            </ul>
+        </div>
+    }
     <div class="main-container" id="main-container">
         <div class="container content">
             <main role="main" class="pb-3">
