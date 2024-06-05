@@ -20,7 +20,7 @@ namespace FrontKFHShortcuts
 
             builder.Services.AddHttpClient();
 
-            builder.Services.AddScoped<GlobalAppState>(_=> new GlobalAppState());
+            builder.Services.AddSingleton<GlobalAppState>(_=> new GlobalAppState());
 
             var app = builder.Build();
 

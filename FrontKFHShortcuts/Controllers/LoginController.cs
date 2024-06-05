@@ -7,13 +7,14 @@ using Microsoft.Extensions.Configuration;
 using FrontKFHShortcuts.Models.LogIn;
 using Microsoft.AspNetCore.Http;
 using FrontKFHShortcuts.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace FrontKFHShortcuts.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly GlobalAppState MyState;
+        [CascadingParameter] private GlobalAppState MyState { get; set; }
 
         public LoginController(HttpClient httpClient, IConfiguration configuration, GlobalAppState state)
         {
@@ -32,17 +33,18 @@ namespace FrontKFHShortcuts.Controllers
             if (ModelState.IsValid)
             {
                 var client = MyState.createClient();
-                var response = await client.PostAsJsonAsync("Authenticaton/Login", request);
+                var response = await client.PostAsJsonAsync("Authentication/Login", request);
                 if(response.IsSuccessStatusCode)
                 {
                     var userInfo = await response.Content.ReadFromJsonAsync<LoginResponse>();
                     MyState.SaveToken(userInfo);
+                    return RedirectToAction("Index", "Dashboard");
                 }
 
                 
             }
 
-            return RedirectToAction("Index", "Dashboard");
+            return View("index");
         }
 
         public IActionResult Welcome()

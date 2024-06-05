@@ -1,5 +1,6 @@
 ﻿using FrontKFHShortcuts.Models;
 using FrontKFHShortcuts.Models.Dashboard;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace FrontKFHShortcuts.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly GlobalAppState MyState;
+        [CascadingParameter] private GlobalAppState MyState { get; set; }
 
         public DashboardController(GlobalAppState state)
         {
