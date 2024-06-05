@@ -10258,6 +10258,8 @@ a.text-light-gray:hover, a.text-light-gray:focus {
 
 .card-body {
     padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 .card-header-toolbar .nav-item a {
