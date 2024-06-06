@@ -10,9 +10,13 @@
             <h2 class="text-center">Add Category</h2>
             @using (Html.BeginForm("Create", "Category", FormMethod.Post))
             {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
                 <div class="form-group">
                     <label for="Name">Category Name</label>
                     @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Enter Category Name" })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
                 <button type="submit" class="btn btn-primary">Add Category</button>
                 <button type="reset" class="btn btn-secondary" style="background-color: #dc3545">Reset</button>
