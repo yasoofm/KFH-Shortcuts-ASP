@@ -13,20 +13,28 @@
 <div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: start;">
     <div class="card" style="width: 20rem; padding: 2rem; margin-top: 60px;">
         <h2 class="text-center">Sign In</h2>
-        <form asp-action="Login" method="post">
+        @using (Html.BeginForm("Login", "LogIn", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
             <div class="form-group">
                 <label for="Email">Email</label>
-                <input type="email" class="form-control" id="Email" name="Email" required />
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control", type = "email", placeholder = "Enter your email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
             </div>
+
             <div class="form-group">
                 <label for="Password">Password</label>
-                <input type="password" class="form-control" id="Password" name="Password" required />
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Enter your password" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
             </div>
+
             <div><button type="submit" class="btn btn-primary btn-block" style="background-color: #008930">Sign In</button></div>
             <div class="text-center mt-2">
                 <a href="#">Forgot Password?</a>
             </div>
-        </form>
+        }
     </div>
 </div>
 
