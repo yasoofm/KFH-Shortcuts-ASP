@@ -112,6 +112,22 @@
             background: none;
         }
 
+        .logout-btn {
+            color: white;
+            position: absolute;
+            top: 42px;
+            right: 25px;
+            z-index: 1001;
+            background-color: #f8f9fa;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            background: none;
+        }
+
         .header .logo-text, .header h1, .navbar-brand {
             color: white;
         }
@@ -123,15 +139,34 @@
             <nav class="navbar navbar-expand-sm navbar-light border-bottom mb-3">
                 <div class="container">
                     <div class="nav-center" style="display: flex; flex-direction: column;">
-                        <a href="Dashboard" style="padding-top: 1.5rem;">
-                            <img src="~/images/logo_kfh_shortcuts.png" alt="Kuwait Finance House Logo" class="logo">
-                        </a>
-                        <a class="navbar-brand" style="color: white; padding-top: 0rem; padding-bottom: 1.5rem" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
+                        @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
+                        {
+                            <a href="Dashboard" style="padding-top: 1.5rem;">
+                                <img src="~/images/logo_kfh_shortcuts.png" alt="Kuwait Finance House Logo" class="logo">
+                            </a>
+                            <a class="navbar-brand" style="color: white; padding-top: 0rem; padding-bottom: 1.5rem" asp-area="" asp-controller="Dashboard" asp-action="Index">KFH Shortcuts</a>
+                        }
+                        else
+                        {
+                            <div style="padding-top: 1.5rem">
+                                <img src="~/images/logo_kfh_shortcuts.png" alt="Kuwait Finance House Logo" class="logo">
+                            </div>
+                            <span class="navbar-brand" style="color: white; padding-top: 0rem; padding-bottom: 1.5rem">KFH Shortcuts</span>
+                        }
                     </div>
+                    @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
+                    {
+                        <button class="btn btn-link text-white logout-btn" onclick="document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                        <form id="logout-form" asp-action="Logout" asp-controller="Login" method="post" style="display: none;"></form>
+                    }
                 </div>
             </nav>
         </header>
     </div>
+
+
     @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "Login" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
     {
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>

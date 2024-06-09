@@ -12,15 +12,16 @@
 
 <div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: start;">
     <div class="card" style="width: 20rem; padding: 2rem; margin-top: 60px;">
+        <div class="text-center">
+            <img src="~/images/kfh_white.png" alt="Kuwait Finance House Logo" class="logo" style="width: 50px; height:fit-content; padding-bottom: 14px; border-radius: 5px">
+        </div>
         <h2 class="text-center">Sign In</h2>
         <form asp-action="Login" method="post">
             <div class="form-group">
-                <label for="Email">Email</label>
-                <input type="email" class="form-control" id="Email" name="Email" required />
+                <input type="email" class="form-control" id="Email" name="Email" required placeholder="KFH Email" />
             </div>
             <div class="form-group">
-                <label for="Password">Password</label>
-                <input type="password" class="form-control" id="Password" name="Password" required />
+                <input type="password" class="form-control" id="Password" name="Password" required placeholder="Password"/>
             </div>
             <div><button type="submit" class="btn btn-primary btn-block" style="background-color: #008930">Sign In</button></div>
             <div class="text-center mt-2">
