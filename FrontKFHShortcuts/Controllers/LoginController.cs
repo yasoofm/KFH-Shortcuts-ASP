@@ -47,6 +47,14 @@ namespace FrontKFHShortcuts.Controllers
             return View("index");
         }
 
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            MyState.RemoveToken();
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Login");
+        }
+
         public IActionResult Welcome()
         {
             ViewBag.FirstName = HttpContext.Session.GetString("FirstName");

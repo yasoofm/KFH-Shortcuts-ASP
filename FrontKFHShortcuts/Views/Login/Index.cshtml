@@ -12,6 +12,9 @@
 
 <div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: start;">
     <div class="card" style="width: 20rem; padding: 2rem; margin-top: 60px;">
+        <div class="text-center">
+            <img src="~/images/kfh_white.png" alt="Kuwait Finance House Logo" class="logo" style="width: 50px; height:fit-content; padding-bottom: 14px; border-radius: 5px">
+        </div>
         <h2 class="text-center">Sign In</h2>
         @using (Html.BeginForm("Login", "LogIn", FormMethod.Post))
         {
@@ -19,12 +22,14 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="form-group">
+
                 <label for="Email">Email</label>
                 @Html.TextBoxFor(model => model.Email, new { @class = "form-control", type = "email", placeholder = "Enter your email" })
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
+
                 <label for="Password">Password</label>
                 @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Enter your password" })
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
