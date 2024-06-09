@@ -249,6 +249,8 @@ namespace BackKFHShortcuts.Controllers
                 await context.SaveChangesAsync();
  
                 var Messages = user.Messages.Select(x => new MessageModel { Role = x.Role, Content = x.Content }).ToList();
+                var SystemMessages = await context.SystemMessages.Select(x => new MessageModel { Role = x.Role, Content = x.Content }).ToListAsync();
+                Messages.InsertRange(0, SystemMessages);
                 var response = await client.PostAsJsonAsync("https://api.openai.com/v1/chat/completions", new OpenAIRequest
                 {
                     Messages = Messages,

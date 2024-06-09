@@ -4,6 +4,7 @@ using BackKFHShortcuts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackKFHShortcuts.Migrations
 {
     [DbContext(typeof(ShortcutsContext))]
-    partial class ShortcutsContextModelSnapshot : ModelSnapshot
+    [Migration("20240606101000_system-messages-migration")]
+    partial class systemmessagesmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,7 +222,7 @@ namespace BackKFHShortcuts.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemMessages");
+                    b.ToTable("SystemMessage");
 
                     b.HasData(
                         new
@@ -306,7 +309,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = true,
                             KFH_Id = 1111,
                             LastName = "Mandani",
-                            Password = "$2a$11$Jz1OlnJpf/AAO3rg5HJAPeGZXwIEdiAD7D/AAMdOqgTBlquBWEH3e",
+                            Password = "$2a$11$PAT5cVIRTHA1PIYpSvKVUuBBG.X9jdPNSdQGJ6VJfuO.BJvjnq6ia",
                             Points = 0
                         },
                         new
@@ -317,7 +320,7 @@ namespace BackKFHShortcuts.Migrations
                             IsAdmin = false,
                             KFH_Id = 1234,
                             LastName = "Mandani",
-                            Password = "$2a$11$4AVV7are2Wc2tUVUImxMXuG7J7aLl6ZDbKEX7kwXohHf6YHvHW.x6",
+                            Password = "$2a$11$jobxxfPBoZeNh7dzVOqRM.v.INCPEi/V.jZM/82xFxHQUZSU/zn3q",
                             Points = 0
                         });
                 });
