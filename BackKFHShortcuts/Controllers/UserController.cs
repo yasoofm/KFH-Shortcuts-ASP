@@ -230,7 +230,7 @@ namespace BackKFHShortcuts.Controllers
             using(var context = _context)
             {
                 HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["OPENAI_APIKEY"]}");
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["NEWKEY"]}");
 
                 var userClaim = User.FindFirst("userId");
                 if (userClaim == null)
